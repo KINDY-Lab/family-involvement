@@ -596,10 +596,10 @@ function renderResults(typeData, radarData) {
   document.getElementById('resultTypeTitle').style.color = typeData.color;
   document.getElementById('resultTypeEn').textContent = typeData.enName;
 
-  // Character (JPG image)
+  // Character (JPG image — circular)
   const charImg = CHARACTER_IMAGES[typeData.code];
   document.getElementById('characterDisplay').innerHTML =
-    `<img src="${charImg}" alt="${typeData.name}" width="180" height="180" loading="lazy" style="object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.1));">`;
+    `<img src="${charImg}" alt="${typeData.name}" class="character-img" loading="lazy">`;
   document.getElementById('characterName').textContent = typeData.name;
   document.getElementById('characterName').style.color = typeData.color;
 
@@ -669,9 +669,9 @@ function renderShareCard(typeData, radarData) {
   document.getElementById('share-suggestions').innerHTML =
     shareSuggestions.map(s => `<li style="margin-bottom:4px;">${s}</li>`).join('');
 
-  // Render share radar chart
+  // Render share radar chart (dark mode)
   setTimeout(() => {
-    renderRadarChart('share-radar-canvas', radarData, '#c9a227', false);
+    renderRadarChart('share-radar-canvas', radarData, '#c9a227', false, { darkMode: true });
   }, 200);
 }
 
@@ -692,10 +692,38 @@ async function downloadShareCard() {
       width: 375,
     });
 
-    const link = document.createElement('a');
-    link.download = '我的家长类型_港中大深圳.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+
+    if (isWeChat) {
+      // WeChat: show image in overlay for long-press save
+      const imgDataUrl = canvas.toDataURL('image/png');
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+
+      const tip = document.createElement('p');
+      tip.textContent = '长按图片保存到相册';
+      tip.style.cssText = 'color:#fff;font-size:15px;margin-bottom:16px;font-weight:500;';
+
+      const img = document.createElement('img');
+      img.src = imgDataUrl;
+      img.style.cssText = 'max-width:100%;max-height:75vh;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = '关闭';
+      closeBtn.style.cssText = 'margin-top:20px;padding:10px 32px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:24px;font-size:14px;cursor:pointer;font-family:inherit;';
+      closeBtn.onclick = () => overlay.remove();
+
+      overlay.appendChild(tip);
+      overlay.appendChild(img);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+    } else {
+      // Standard browser: download
+      const link = document.createElement('a');
+      link.download = '我的家长类型_港中大深圳.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
   } catch (e) {
     console.error('截图失败:', e);
     alert('生成分享图失败，请稍后重试');

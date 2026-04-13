@@ -1,12 +1,12 @@
 // ═══════════════════════════════════════════════════════════════
-// radar.js — Chart.js radar chart rendering
+// radar.js — Chart.js radar chart rendering (Time-perspective style)
 // ═══════════════════════════════════════════════════════════════
 
 let radarInstance = null;
 let shareRadarInstance = null;
 let tcRadarInstance = null;
 
-function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
+function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild, options = {}) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -22,6 +22,7 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
   }
 
   const isMobile = window.innerWidth < 600;
+  const darkMode = options.darkMode || false;
   const labels = ['居家学习', '学校参与', '家园沟通', '情绪支持', '解决引导'];
   const data = [
     radarData.radar_home || 0,
@@ -43,10 +44,12 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
     {
       label: '您的得分',
       data: data,
-      backgroundColor: hexToRgba(typeColor, 0.15),
-      borderColor: typeColor,
-      borderWidth: 2.5,
-      pointBackgroundColor: typeColor,
+      backgroundColor: darkMode ? 'rgba(255,255,255,0.15)' : hexToRgba(typeColor, 0.2),
+      borderColor: darkMode ? 'rgba(255,255,255,0.85)' : typeColor,
+      borderWidth: 2,
+      pointBackgroundColor: darkMode ? '#ffffff' : typeColor,
+      pointBorderColor: darkMode ? 'rgba(255,255,255,0.5)' : '#ffffff',
+      pointBorderWidth: 2,
       pointRadius: isMobile ? 4 : 5,
       pointHoverRadius: isMobile ? 6 : 7,
     }
@@ -58,32 +61,44 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
     options: {
       responsive: true,
       maintainAspectRatio: true,
-      animation: { duration: 800, easing: 'easeInOutQuart' },
+      animation: {
+        duration: 800,
+        easing: 'easeOutQuart'
+      },
       scales: {
         r: {
           min: 0,
           max: 100,
           ticks: {
             stepSize: 25,
-            font: { size: isMobile ? 9 : 11 },
-            color: '#888',
+            font: { size: darkMode ? (isMobile ? 10 : 11) : (isMobile ? 9 : 10) },
+            color: darkMode ? 'rgba(255,255,255,0.4)' : '#9CA3AF',
             backdropColor: 'transparent'
           },
-          grid: { color: 'rgba(0,0,0,0.08)' },
+          grid: {
+            color: darkMode ? 'rgba(255,255,255,0.12)' : '#e5e7eb',
+            circular: true,
+            lineWidth: 1
+          },
           pointLabels: {
-            font: { size: isMobile ? 10 : 12, weight: '500' },
-            color: '#444'
+            font: { size: darkMode ? (isMobile ? 12 : 14) : (isMobile ? 11 : 12), weight: '500' },
+            color: darkMode ? 'rgba(255,255,255,0.9)' : '#4b5563'
+          },
+          angleLines: {
+            color: darkMode ? 'rgba(255,255,255,0.12)' : '#e5e7eb',
+            lineWidth: 1
           }
         }
       },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: 'rgba(78,42,132,0.9)',
+          backgroundColor: darkMode ? 'rgba(0,0,0,0.7)' : 'rgba(30,30,30,0.85)',
           titleFont: { size: 12 },
-          bodyFont: { size: 11 },
+          bodyFont: { size: 12 },
           padding: 10,
-          cornerRadius: 6,
+          cornerRadius: 8,
+          displayColors: false,
           callbacks: {
             label: function(context) {
               if (context.parsed.r === null) return '';
@@ -123,11 +138,12 @@ function renderTCRadarChart(canvasId, groupScores) {
       datasets: [{
         label: '家园关系',
         data: tcData,
-        backgroundColor: 'rgba(148,163,184,0.12)',
+        backgroundColor: 'rgba(148,163,184,0.15)',
         borderColor: '#94A3B8',
         borderWidth: 2,
-        borderDash: [5, 3],
         pointBackgroundColor: '#64748B',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
         pointRadius: isMobile ? 3 : 4,
         pointHoverRadius: isMobile ? 5 : 6,
       }]
@@ -135,7 +151,10 @@ function renderTCRadarChart(canvasId, groupScores) {
     options: {
       responsive: true,
       maintainAspectRatio: true,
-      animation: { duration: 800, easing: 'easeInOutQuart' },
+      animation: {
+        duration: 800,
+        easing: 'easeOutQuart'
+      },
       scales: {
         r: {
           min: 0,
@@ -143,24 +162,33 @@ function renderTCRadarChart(canvasId, groupScores) {
           ticks: {
             stepSize: 25,
             font: { size: isMobile ? 8 : 10 },
-            color: '#888',
+            color: '#9CA3AF',
             backdropColor: 'transparent'
           },
-          grid: { color: 'rgba(0,0,0,0.06)' },
+          grid: {
+            color: '#e5e7eb',
+            circular: true,
+            lineWidth: 1
+          },
           pointLabels: {
             font: { size: isMobile ? 9 : 11, weight: '400' },
-            color: '#666'
+            color: '#6b7280'
+          },
+          angleLines: {
+            color: '#e5e7eb',
+            lineWidth: 1
           }
         }
       },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: 'rgba(100,116,139,0.9)',
+          backgroundColor: 'rgba(30,30,30,0.85)',
           titleFont: { size: 11 },
           bodyFont: { size: 11 },
           padding: 8,
-          cornerRadius: 6,
+          cornerRadius: 8,
+          displayColors: false,
           callbacks: {
             label: function(context) {
               return '得分: ' + context.parsed.r.toFixed(1);

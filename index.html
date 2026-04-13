@@ -115,7 +115,10 @@
   <!-- ── Results ── -->
   <div class="result-section" id="resultsSection">
     <div class="result-header">
-      <img src="assets/logo/Kindy_lab.webp" alt="KINDY Lab" class="result-logo" style="mix-blend-mode:multiply;" width="120" height="40" loading="lazy">
+      <div class="result-logos">
+        <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="result-logo" style="mix-blend-mode:multiply;" loading="lazy">
+        <img src="assets/logo/Kindy_lab.webp" alt="KINDY Lab" class="result-logo result-logo-kindylab" style="mix-blend-mode:multiply;" loading="lazy">
+      </div>
       <h2 class="result-type-title" id="resultTypeTitle"></h2>
       <p class="result-type-en" id="resultTypeEn"></p>
     </div>
@@ -168,8 +171,13 @@
           <!-- 顶部金色装饰线 -->
           <div style="height:5px; background:linear-gradient(90deg,#c9a227,#f0d080,#c9a227);"></div>
 
+          <!-- Logos for dark background -->
+          <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin:12px 0 0;">
+            <img src="assets/logo/logo_dark.jpg" alt="CUHK-Shenzhen" style="height:36px; width:auto; border-radius:4px;">
+          </div>
+
           <!-- 机构名 -->
-          <p style="font-size:11px; color:#f0d080; letter-spacing:1.5px; margin:14px 0 0; opacity:0.9;">
+          <p style="font-size:11px; color:#f0d080; letter-spacing:1.5px; margin:10px 0 0; opacity:0.9;">
             香港中文大学（深圳）· 家庭教育研究
           </p>
 
@@ -211,8 +219,8 @@
           "></div>
 
           <!-- 雷达图 -->
-          <div style="margin:0 auto 14px; width:270px; height:210px; position:relative;">
-            <canvas id="share-radar-canvas" width="270" height="210"></canvas>
+          <div style="margin:0 auto 14px; width:290px; height:230px; position:relative;">
+            <canvas id="share-radar-canvas" width="290" height="230"></canvas>
           </div>
 
           <!-- 类型描述（2-3句） -->

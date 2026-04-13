@@ -141,10 +141,10 @@ const PARENT_TYPES = {
     oneLineDesc: '您以充分的参与和温暖的情感支持，为孩子构建了安全而丰富的成长环境。',
     description: '您以充分的参与和温暖的情感支持，为孩子构建了一个安全而丰富的成长环境。无论是在家陪伴学习、积极参与学校活动，还是在孩子遇到情绪波动时给予倾听和引导，您都做到了高度的投入。研究表明，这种全面的<span class="highlight">家庭参与方式</span>，对孩子的<span class="highlight">学业表现</span>、<span class="highlight">社交能力</span>和<span class="highlight">情感健全发展</span>都有显著的正向影响。',
     traits: [
-      '积极参与孩子的学习与校园生活，提供丰富的学习资源',
-      '善于倾听和回应孩子的情绪，帮助孩子建立情绪词汇',
-      '与幼儿园老师保持良好沟通，是家园合作的积极推动者',
-      '在家营造了温暖而有结构的学习氛围'
+      '<span class="highlight">积极参与</span>孩子的学习与校园生活，提供丰富的学习资源',
+      '善于倾听和回应孩子的情绪，帮助孩子建立<span class="highlight">情绪词汇</span>',
+      '与幼儿园老师保持良好沟通，是<span class="highlight">家园合作</span>的积极推动者',
+      '在家营造了<span class="highlight">温暖而有结构</span>的学习氛围'
     ],
   },
   ACADEMIC_LEAD: {
@@ -157,10 +157,10 @@ const PARENT_TYPES = {
     oneLineDesc: '您对孩子的教育倾注了大量精力，认真负责地规划着学习成长之路。',
     description: '您对孩子的教育倾注了大量的时间和精力——无论是辅导学习、参与学校活动，还是和老师保持沟通，您都做得认真负责。面对孩子的情绪，您有时倾向于转移注意力或以"要坚强"来回应，这是很多专注于解决问题的家长的自然反应。<span class="highlight">情绪引导</span>和<span class="highlight">认知引导</span>同样重要，适当增加<span class="highlight">情感回应</span>，孩子的<span class="highlight">心理韧性</span>会更强。',
     traits: [
-      '高度重视孩子的学习发展，积极营造有利于学业的家庭环境',
-      '认真参与学校活动和家园沟通，是老师信赖的家长',
-      '擅长规划、有结构地支持孩子',
-      '对孩子抱有真诚的期望和关注'
+      '<span class="highlight">高度重视</span>孩子的学习发展，积极营造有利于学业的家庭环境',
+      '认真参与学校活动和<span class="highlight">家园沟通</span>，是老师信赖的家长',
+      '<span class="highlight">擅长规划</span>、有结构地支持孩子',
+      '对孩子抱有<span class="highlight">真诚的期望</span>和关注'
     ],
   },
   WARM_COMPANION: {
@@ -173,10 +173,10 @@ const PARENT_TYPES = {
     oneLineDesc: '您对孩子的内心世界高度敏感，善于回应孩子的情绪，创造了温暖有安全感的家庭氛围。',
     description: '您对孩子的内心世界高度敏感，善于回应孩子的情绪，为孩子创造了一个温暖而有安全感的家庭氛围。孩子在您身边感到被接纳和理解。研究显示，<span class="highlight">情感安全感</span>是孩子探索世界的基础。在情感联结已经非常稳固的基础上，适当增加一些<span class="highlight">结构性的学习参与</span>，将让孩子在<span class="highlight">情感</span>和<span class="highlight">认知</span>两个维度都得到充分的滋养。',
     traits: [
-      '情感细腻，善于捕捉并回应孩子的情绪需求',
-      '为孩子创造了温暖、接纳的家庭氛围',
-      '孩子愿意向您倾诉，亲子关系质量高',
-      '重视孩子的感受胜过对结果的评判'
+      '情感细腻，善于捕捉并回应孩子的<span class="highlight">情绪需求</span>',
+      '为孩子创造了<span class="highlight">温暖、接纳</span>的家庭氛围',
+      '孩子愿意向您倾诉，<span class="highlight">亲子关系</span>质量高',
+      '重视孩子的<span class="highlight">感受</span>胜过对结果的评判'
     ],
   },
   GROWTH_EXPLORER: {
@@ -190,9 +190,9 @@ const PARENT_TYPES = {
     description: '您和孩子都在各自的成长旅程中同行。在家庭参与和情绪引导两个方面，您都有很多值得探索的空间。这一类型的家长往往面临较多的生活压力，或正在经历职业、家庭角色的转型期。愿意填写这份问卷，本身就是<span class="highlight">自我觉察</span>的开始——而自我觉察，正是所有改变中<span class="highlight">最重要的第一步</span>。',
     traits: [
       '有意识地反思自己的教育方式，具备<span class="highlight">成长型思维</span>',
-      '对孩子抱有真诚的爱与期望',
-      '愿意接受新的育儿理念和方法',
-      '您的孩子，正在一位真诚的家长身边慢慢成长'
+      '对孩子抱有<span class="highlight">真诚的爱与期望</span>',
+      '愿意接受<span class="highlight">新的育儿理念</span>和方法',
+      '您的孩子，正在一位<span class="highlight">真诚</span>的家长身边慢慢成长'
     ],
   }
 };
