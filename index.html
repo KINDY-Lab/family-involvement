@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学前儿童家庭教育环境与情绪引导方式调查问卷</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Masthead ── -->
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo-row">
+      <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="masthead-logo">
+      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab" class="masthead-logo">
+    </div>
+    <h1 class="masthead-title">学前儿童家庭教育环境<br><span>与情绪引导方式调查问卷</span></h1>
+    <p class="masthead-sub">香港中文大学（深圳）人文社科学院 KINDY Lab</p>
+    <div class="masthead-meta">
+      <div class="meta-pill">5 个步骤</div>
+      <div class="meta-pill">约 15-20 分钟</div>
+      <div class="meta-pill">自动生成家长类型</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Progress Bar ── -->
+<div class="container">
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-info">
+      <span id="progressText">欢迎 · 0%</span>
+      <span id="progressStep"></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- ── Welcome ── -->
+  <div class="welcome-section" id="welcome">
+    <div class="welcome-logos">
+      <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS">
+      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab">
+    </div>
+    <h2 class="welcome-title">学前儿童家庭教育环境与情绪引导方式调查</h2>
+    <div class="welcome-desc">
+      <p>尊敬的家长，您好！非常感谢您在百忙之中支持本项研究。本调查旨在了解您参与孩子日常教育的情况、您与幼儿园教师的沟通协作体验，以及您在面对孩子情绪变化时的真实回应。</p>
+      <p style="margin-top:10px">您的参与将为我们探索更优质的家园共育模式、促进幼儿身心健康成长提供极具价值的参考。</p>
+      <p style="margin-top:10px">整份问卷预计耗时 <strong>15-20 分钟</strong>。我们承诺对您提供的信息严格保密，数据分析前将剔除所有身份识别信息，研究报告也仅呈现群体性趋势而非个人数据。请您放心填写。</p>
+      <p style="margin-top:10px"><strong>问卷选项不分对错</strong>，您的直观感受和真实做法对我们至关重要。</p>
+    </div>
+    <div class="welcome-consent">
+      <strong>知情同意声明</strong><br>
+      本问卷由香港中文大学（深圳）人文社科学院 KINDY Lab 发起，仅用于学术研究目的。所有数据匿名采集，不收集姓名、手机号等可识别个人信息。数据存储于腾讯云加密数据库，仅研究团队有权访问。您有权随时中止填写，已提交的数据可在分析前要求删除。点击下方按钮即表示您已了解并同意参与。
+    </div>
+    <button class="btn-start" onclick="startQuestionnaire()">我已了解，开始填写</button>
+  </div>
+
+  <!-- ── Step 1: Demographics ── -->
+  <div class="step-section" id="step1">
+    <h2 class="step-title">Step 1 / 4 · 背景信息</h2>
+    <p class="step-desc">以下问题仅用于分组分析，不参与最终类型计算。请根据实际情况填写。</p>
+    <div id="step1Content"></div>
+    <div class="validation-msg" id="validationMsg1" style="display:none"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn btn-next" onclick="nextStep()">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 2: FIQ ── -->
+  <div class="step-section" id="step2">
+    <h2 class="step-title">Step 2 / 4 · 家庭参与</h2>
+    <p class="step-desc">请根据近期的实际情况，回忆并评估您进行以下活动的频率。您通常多长时间做一次以下的活动？</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      <span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">1 = 很少</span>
+      <span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">2 = 有时</span>
+      <span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">3 = 经常</span>
+      <span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">4 = 总是</span>
+    </div>
+    <div id="step2Content"></div>
+    <div class="validation-msg" id="validationMsg2" style="display:none"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn btn-prev" onclick="prevStep()">← 上一步</button>
+      <button class="nav-btn btn-next" onclick="nextStep()">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Teacher-Child ── -->
+  <div class="step-section" id="step3">
+    <h2 class="step-title">Step 3 / 4 · 家园关系</h2>
+    <p class="step-desc">以下部分旨在了解您与孩子班级教师之间的沟通、合作方式以及您对双方关系的真实感受。请您结合当前班级教师的实际互动情况作答。</p>
+    <div id="step3Content"></div>
+    <div class="validation-msg" id="validationMsg3" style="display:none"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn btn-prev" onclick="prevStep()">← 上一步</button>
+      <button class="nav-btn btn-next" onclick="nextStep()">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 4: CCNES ── -->
+  <div class="step-section" id="step4">
+    <h2 class="step-title">Step 4 / 4 · 情绪引导方式</h2>
+    <p class="step-desc">最后一部分将关注您在面对孩子出现消极情绪（如生气、伤心、害怕等）时的真实回应方式。请阅读以下12个日常情境，并根据您的实际做法对每种回应方式的可能性进行评分。</p>
+    <div id="step4Content"></div>
+    <div class="validation-msg" id="validationMsg4" style="display:none"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn btn-prev" onclick="prevStep()">← 上一步</button>
+      <button class="nav-btn btn-next" onclick="nextStep()">提交问卷 →</button>
+    </div>
+  </div>
+
+  <!-- ── Loading ── -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p style="color:var(--color-text-muted);font-size:14px">正在分析您的回答...</p>
+  </div>
+
+  <!-- ── Results ── -->
+  <div class="result-section" id="resultsSection">
+    <div class="result-header">
+      <h2 class="result-type-title" id="resultTypeTitle"></h2>
+      <p class="result-type-en" id="resultTypeEn"></p>
+    </div>
+
+    <div class="character-display" id="characterDisplay"></div>
+    <p class="character-name text-center" id="characterName"></p>
+
+    <div class="chart-section">
+      <div class="chart-title">你的家庭教育雷达图</div>
+      <div class="chart-wrapper">
+        <canvas id="radarChart"></canvas>
+      </div>
+      <p class="chart-note">* 家园关系维度为家长对师幼关系的感知，仅供参考，不参与类型判定</p>
+    </div>
+
+    <div class="feedback-card">
+      <h3>类型描述</h3>
+      <p id="resultDescription"></p>
+    </div>
+
+    <div class="feedback-card">
+      <h3>你的特质</h3>
+      <ul id="resultTraits"></ul>
+    </div>
+
+    <div class="feedback-card suggestion-card">
+      <h3>成长建议</h3>
+      <ul id="resultSuggestions"></ul>
+    </div>
+
+    <!-- Share Section -->
+    <div class="share-section">
+      <div class="share-card-wrapper">
+        <div id="share-card" style="border-top: 6px solid #F59E0B;">
+          <p style="font-size:11px;color:#C9A227;margin:0 0 16px;">香港中文大学（深圳）人文社科学院 KINDY Lab</p>
+          <div id="shareCharacter" style="margin:0 auto 12px;"></div>
+          <h2 id="shareTypeName" style="font-size:22px;font-weight:700;color:#1F2937;margin:0 0 4px;">我是「全情护航者」</h2>
+          <p id="shareTypeSub" style="font-size:13px;color:#6B7280;margin:0 0 20px;">全方位投入 · 情感支持型家长</p>
+          <canvas id="share-radar" width="280" height="220"></canvas>
+          <p id="shareDesc" style="font-size:13px;color:#374151;line-height:1.7;margin:16px 0;"></p>
+          <p style="font-size:10px;color:#9CA3AF;margin:16px 0 0;">扫码参与测评 · 了解你的家长类型</p>
+        </div>
+      </div>
+      <br>
+      <button class="share-download-btn" onclick="downloadShareCard()">保存并分享结果图</button>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;">
+      <button class="nav-btn btn-prev" onclick="resetQuestionnaire()" style="display:inline-block;width:auto;padding:10px 24px;">重新填写</button>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="footer-logo">
+    <div class="footer-line">香港中文大学（深圳）人文社科学院 KINDY Lab</div>
+    <div class="footer-line">The Chinese University of Hong Kong, Shenzhen</div>
+    <div class="footer-line">For academic research only · 仅供学术研究使用</div>
+  </div>
+</div>
+
+<!-- ── Scripts ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://imgcache.qq.com/qcloud/tcbjs/1.12.1/tcb.js"></script>
+<script src="js/data.js"></script>
+<script src="js/scoring.js"></script>
+<script src="js/radar.js"></script>
+<script src="js/db.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
