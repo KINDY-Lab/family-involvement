@@ -4,6 +4,7 @@
 
 let radarInstance = null;
 let shareRadarInstance = null;
+let tcRadarInstance = null;
 
 function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
   const canvas = document.getElementById(canvasId);
@@ -40,7 +41,7 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
 
   const datasets = [
     {
-      label: '你的得分',
+      label: '您的得分',
       data: data,
       backgroundColor: hexToRgba(typeColor, 0.15),
       borderColor: typeColor,
@@ -50,22 +51,6 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
       pointHoverRadius: isMobile ? 6 : 7,
     }
   ];
-
-  // Add teacher-child as reference if available
-  if (includeTeacherChild && radarData.radar_teacher_child !== undefined) {
-    labels.push('家园关系*');
-    datasets[0].data.push(null); // No main data for this axis
-    datasets.push({
-      label: '家园关系（参考）',
-      data: [null, null, null, null, null, radarData.radar_teacher_child],
-      borderDash: [5, 5],
-      borderColor: '#94A3B8',
-      backgroundColor: 'rgba(148,163,184,0.08)',
-      pointBackgroundColor: '#94A3B8',
-      pointRadius: isMobile ? 3 : 4,
-      borderWidth: 2,
-    });
-  }
 
   const chart = new Chart(ctx, {
     type: 'radar',
@@ -92,15 +77,7 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
         }
       },
       plugins: {
-        legend: {
-          display: includeTeacherChild,
-          position: 'bottom',
-          labels: {
-            font: { size: isMobile ? 10 : 11 },
-            padding: 10,
-            usePointStyle: true
-          }
-        },
+        legend: { display: false },
         tooltip: {
           backgroundColor: 'rgba(78,42,132,0.9)',
           titleFont: { size: 12 },
@@ -121,5 +98,79 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
   if (canvasId === 'radarChart') radarInstance = chart;
   if (canvasId === 'share-radar') shareRadarInstance = chart;
 
+  return chart;
+}
+
+// ── Teacher-Child Radar Chart ──
+function renderTCRadarChart(canvasId, groupScores) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  if (tcRadarInstance) {
+    tcRadarInstance.destroy();
+    tcRadarInstance = null;
+  }
+
+  const isMobile = window.innerWidth < 600;
+  const tcLabels = ['沟通频率', '信息分享\n舒适度', '教师响应', '文化契合', '教师品质', '公平感知'];
+  const tcData = groupScores.map(g => g.radar || 0);
+
+  const chart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: tcLabels,
+      datasets: [{
+        label: '家园关系',
+        data: tcData,
+        backgroundColor: 'rgba(148,163,184,0.12)',
+        borderColor: '#94A3B8',
+        borderWidth: 2,
+        borderDash: [5, 3],
+        pointBackgroundColor: '#64748B',
+        pointRadius: isMobile ? 3 : 4,
+        pointHoverRadius: isMobile ? 5 : 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: { duration: 800, easing: 'easeInOutQuart' },
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: {
+            stepSize: 25,
+            font: { size: isMobile ? 8 : 10 },
+            color: '#888',
+            backdropColor: 'transparent'
+          },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          pointLabels: {
+            font: { size: isMobile ? 9 : 11, weight: '400' },
+            color: '#666'
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(100,116,139,0.9)',
+          titleFont: { size: 11 },
+          bodyFont: { size: 11 },
+          padding: 8,
+          cornerRadius: 6,
+          callbacks: {
+            label: function(context) {
+              return '得分: ' + context.parsed.r.toFixed(1);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  tcRadarInstance = chart;
   return chart;
 }

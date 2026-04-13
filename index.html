@@ -11,15 +11,11 @@
 <!-- ── Masthead ── -->
 <div class="masthead">
   <div class="masthead-inner">
-    <div class="masthead-logo-row">
-      <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="masthead-logo">
-      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab" class="masthead-logo">
-    </div>
     <h1 class="masthead-title">学前儿童家庭教育环境<br><span>与情绪引导方式调查问卷</span></h1>
     <p class="masthead-sub">香港中文大学（深圳）人文社科学院 KINDY Lab</p>
     <div class="masthead-meta">
       <div class="meta-pill">5 个步骤</div>
-      <div class="meta-pill">约 15-20 分钟</div>
+      <div class="meta-pill">约 5-10 分钟</div>
       <div class="meta-pill">自动生成家长类型</div>
     </div>
   </div>
@@ -47,12 +43,12 @@
     <div class="welcome-desc">
       <p>尊敬的家长，您好！非常感谢您在百忙之中支持本项研究。本调查旨在了解您参与孩子日常教育的情况、您与幼儿园教师的沟通协作体验，以及您在面对孩子情绪变化时的真实回应。</p>
       <p style="margin-top:10px">您的参与将为我们探索更优质的家园共育模式、促进幼儿身心健康成长提供极具价值的参考。</p>
-      <p style="margin-top:10px">整份问卷预计耗时 <strong>15-20 分钟</strong>。我们承诺对您提供的信息严格保密，数据分析前将剔除所有身份识别信息，研究报告也仅呈现群体性趋势而非个人数据。请您放心填写。</p>
+      <p style="margin-top:10px">整份问卷预计耗时 <strong>5-10 分钟</strong>。我们承诺对您提供的信息严格保密，数据分析前将剔除所有身份识别信息，研究报告也仅呈现群体性趋势而非个人数据。请您放心填写。</p>
       <p style="margin-top:10px"><strong>问卷选项不分对错</strong>，您的直观感受和真实做法对我们至关重要。</p>
     </div>
     <div class="welcome-consent">
       <strong>知情同意声明</strong><br>
-      本问卷由香港中文大学（深圳）人文社科学院 KINDY Lab 发起，仅用于学术研究目的。所有数据匿名采集，不收集姓名、手机号等可识别个人信息。数据存储于腾讯云加密数据库，仅研究团队有权访问。您有权随时中止填写，已提交的数据可在分析前要求删除。点击下方按钮即表示您已了解并同意参与。
+      本问卷由香港中文大学（深圳）人文社科学院 KINDY Lab 发起，仅用于学术研究目的。所有数据匿名采集，不收集姓名、手机号等可识别个人信息。数据存储于课题组加密的数据库，仅研究团队有权访问。您有权随时中止填写，已提交的数据可在分析前要求删除。点击下方按钮即表示您已了解并同意参与。
     </div>
     <button class="btn-start" onclick="startQuestionnaire()">我已了解，开始填写</button>
   </div>
@@ -119,6 +115,7 @@
   <!-- ── Results ── -->
   <div class="result-section" id="resultsSection">
     <div class="result-header">
+      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab" class="result-logo" style="mix-blend-mode:multiply;">
       <h2 class="result-type-title" id="resultTypeTitle"></h2>
       <p class="result-type-en" id="resultTypeEn"></p>
     </div>
@@ -127,11 +124,17 @@
     <p class="character-name text-center" id="characterName"></p>
 
     <div class="chart-section">
-      <div class="chart-title">你的家庭教育雷达图</div>
-      <div class="chart-wrapper">
+      <div class="chart-title">您的家庭教育雷达图</div>
+      <div class="chart-wrapper chart-animate">
         <canvas id="radarChart"></canvas>
       </div>
-      <p class="chart-note">* 家园关系维度为家长对师幼关系的感知，仅供参考，不参与类型判定</p>
+    </div>
+
+    <div class="chart-section chart-secondary">
+      <div class="chart-title">家园关系雷达图 <span style="font-size:11px;color:#6B7280;font-weight:400;">（仅供参考，不参与类型判定）</span></div>
+      <div class="chart-wrapper chart-animate">
+        <canvas id="tcRadarChart"></canvas>
+      </div>
     </div>
 
     <div class="feedback-card">
@@ -140,7 +143,7 @@
     </div>
 
     <div class="feedback-card">
-      <h3>你的特质</h3>
+      <h3>您的特质</h3>
       <ul id="resultTraits"></ul>
     </div>
 
@@ -159,7 +162,13 @@
           <p id="shareTypeSub" style="font-size:13px;color:#6B7280;margin:0 0 20px;">全方位投入 · 情感支持型家长</p>
           <canvas id="share-radar" width="280" height="220"></canvas>
           <p id="shareDesc" style="font-size:13px;color:#374151;line-height:1.7;margin:16px 0;"></p>
-          <p style="font-size:10px;color:#9CA3AF;margin:16px 0 0;">扫码参与测评 · 了解你的家长类型</p>
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0 0;">
+            <img src="assets/qrcode.png" alt="扫码参与测评" style="width:80px;height:80px;border-radius:8px;">
+            <div style="text-align:left;">
+              <p style="font-size:10px;color:#9CA3AF;margin:0;">扫码参与测评</p>
+              <p style="font-size:10px;color:#9CA3AF;margin:2px 0 0;">了解您的家长类型</p>
+            </div>
+          </div>
         </div>
       </div>
       <br>
@@ -177,6 +186,7 @@
     <div class="footer-line">香港中文大学（深圳）人文社科学院 KINDY Lab</div>
     <div class="footer-line">The Chinese University of Hong Kong, Shenzhen</div>
     <div class="footer-line">For academic research only · 仅供学术研究使用</div>
+    <div class="footer-line footer-credit">Developed by Runke Huang (<a href="mailto:runkehuang@cuhk.edu.cn">runkehuang@cuhk.edu.cn</a>)</div>
   </div>
 </div>
 

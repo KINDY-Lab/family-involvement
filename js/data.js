@@ -173,7 +173,7 @@ const QUESTIONNAIRE_DATA = {
   teacherChild: {
     teacherName: {
       id: 'tc_teacher_name',
-      text: '您孩子的班级教师姓名（或称呼）是：',
+      text: '您孩子的班级教师姓名（或称呼）是：（如果不知道，也可以填不知道）',
       type: 'text',
       placeholder: '请填写教师姓名或称呼'
     },

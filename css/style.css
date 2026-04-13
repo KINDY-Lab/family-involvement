@@ -44,17 +44,6 @@ body {
   max-width: 600px;
   margin: 0 auto;
 }
-.masthead-logo-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.masthead-logo {
-  height: 48px;
-  width: auto;
-  border-radius: 8px;
-}
 .masthead-title {
   font-size: 18px;
   font-weight: 700;
@@ -86,7 +75,6 @@ body {
 @media (min-width: 600px) {
   .masthead { padding: 24px 24px 28px; }
   .masthead-title { font-size: 22px; }
-  .masthead-logo { height: 56px; }
 }
 
 /* ── Container ── */
@@ -138,13 +126,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 .welcome-logos img {
-  height: 64px;
+  height: 40px;
   width: auto;
   border-radius: 8px;
+  mix-blend-mode: multiply;
 }
 .welcome-title {
   font-size: 20px;
@@ -222,7 +212,7 @@ body {
   border-radius: 8px;
   padding: 14px 12px;
   margin-bottom: 8px;
-  transition: box-shadow .15s, border-color .15s;
+  transition: box-shadow .15s, border-color .15s, transform .2s;
 }
 .q-card:hover {
   border-color: #c5c0b0;
@@ -231,8 +221,9 @@ body {
 .q-card.answered {
   border-left: 3px solid var(--color-primary);
 }
-.q-card.unanswered-highlight {
-  border-color: #EF4444;
+.q-card.unanswered-highlight,
+.matrix-row.unanswered-highlight {
+  border-color: #EF4444 !important;
   background: #FEF2F2;
 }
 .q-num {
@@ -254,12 +245,14 @@ body {
   gap: 6px;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .rating-label {
   font-size: 10px;
   color: var(--color-text-muted);
   white-space: nowrap;
 }
+/* ⑫ Step 2 按钮改为正圆形 */
 .r-btn {
   min-width: 44px;
   height: 44px;
@@ -276,16 +269,18 @@ body {
   justify-content: center;
   flex: 1;
   max-width: 56px;
+  aspect-ratio: 1;
 }
 .r-btn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: rgba(78,42,132,.05);
+  transform: scale(1.05);
 }
 .r-btn.selected {
   color: #fff !important;
   border-color: transparent !important;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 /* ── Demographics Form ── */
@@ -409,6 +404,11 @@ body {
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  transition: box-shadow .2s, transform .2s;
+}
+.scenario-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.08);
+  transform: translateY(-1px);
 }
 .scenario-header {
   display: flex;
@@ -487,6 +487,15 @@ body {
   flex-wrap: wrap;
 }
 .matrix-row:last-child { border-bottom: none; }
+/* ⑦ Vertical layout for Step 3 options */
+.matrix-row-vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.matrix-row-vertical .matrix-item-text {
+  min-width: unset;
+  width: 100%;
+}
 .matrix-item-text {
   flex: 1;
   font-size: 13px;
@@ -494,10 +503,20 @@ body {
   color: #444;
   min-width: 140px;
 }
+.matrix-item-text .q-num {
+  margin-right: 4px;
+}
 .matrix-options {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
+}
+.matrix-options-full {
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-top: 6px;
 }
 .matrix-opt {
   min-width: 40px;
@@ -522,6 +541,21 @@ body {
   background: var(--color-primary);
   color: #fff;
   border-color: var(--color-primary);
+}
+/* ⑦ Full-text option buttons */
+.matrix-opt-full {
+  min-width: unset;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 12px;
+  border-radius: 17px;
+  white-space: nowrap;
+}
+.matrix-opt-full:hover {
+  transform: scale(1.03);
+}
+.matrix-opt-full.selected {
+  transform: scale(1.05);
 }
 .matrix-scale-labels {
   display: flex;
@@ -577,6 +611,10 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(78,42,132,.35);
 }
+.btn-next:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(78,42,132,.25);
+}
 .btn-start {
   display: block;
   width: 100%;
@@ -597,6 +635,9 @@ body {
 .btn-start:hover {
   background: var(--color-primary-light);
   transform: translateY(-2px);
+}
+.btn-start:active {
+  transform: translateY(0);
 }
 .validation-msg {
   text-align: center;
@@ -635,11 +676,21 @@ body {
   text-align: center;
   padding: 24px 16px;
 }
+/* ⑩ KINDY Lab logo in results */
+.result-logo {
+  height: 40px;
+  width: auto;
+  margin-bottom: 12px;
+}
 .result-type-title {
   font-size: 22px;
   font-weight: 700;
   color: var(--color-gold);
   margin-bottom: 4px;
+  line-height: 1.4;
+  /* ⑭ prevent bad line breaks */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 .result-type-en {
   font-size: 13px;
@@ -650,16 +701,21 @@ body {
 .character-display {
   text-align: center;
   margin: 16px 0;
-  animation: bounceIn .5s ease;
+  animation: bounceIn .6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .character-display svg {
-  width: 160px;
+  width: 180px;
   height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.1));
+  transition: transform .3s;
+}
+.character-display svg:hover {
+  transform: scale(1.05) rotate(2deg);
 }
 @keyframes bounceIn {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); }
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
 }
 .character-name {
   font-size: 14px;
@@ -673,14 +729,32 @@ body {
   margin: 24px auto;
   max-width: 500px;
 }
+.chart-secondary {
+  max-width: 420px;
+  padding: 16px;
+  background: #FAFAFA;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
 .chart-title {
   font-size: 14px;
   color: var(--color-primary);
   margin-bottom: 12px;
+  font-weight: 600;
 }
 .chart-wrapper {
   position: relative;
   width: 100%;
+}
+/* ⑮ Radar chart entrance animation */
+.chart-animate {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.chart-animate.visible {
+  opacity: 1;
+  transform: scale(1);
 }
 .chart-note {
   font-size: 11px;
@@ -696,6 +770,14 @@ body {
   border-radius: var(--radius);
   padding: 18px 16px;
   margin: 16px 0;
+  /* ⑩ subtle entrance animation */
+  animation: fadeSlideUp .5s ease both;
+}
+.feedback-card:nth-child(2) { animation-delay: .1s; }
+.feedback-card:nth-child(3) { animation-delay: .2s; }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .feedback-card h3 {
   font-size: 15px;
@@ -732,6 +814,11 @@ body {
   content: '\2192';
   color: var(--color-gold);
 }
+/* ⑰ Keyword highlight */
+.highlight {
+  color: var(--color-primary);
+  font-weight: 600;
+}
 
 /* ── Share Card ── */
 .share-section {
@@ -748,6 +835,7 @@ body {
   border-radius: 20px;
   text-align: center;
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
 }
 #share-card .share-org {
   font-size: 11px;
@@ -796,6 +884,10 @@ body {
 .share-download-btn:hover {
   background: var(--color-primary-light);
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(78,42,132,.3);
+}
+.share-download-btn:active {
+  transform: translateY(0);
 }
 
 /* ── Footer ── */
@@ -817,6 +909,9 @@ body {
   object-fit: contain;
 }
 .footer-line { margin-bottom: 4px; }
+.footer-credit { margin-top: 8px; color: #888; }
+.footer-credit a { color: var(--color-primary); text-decoration: none; }
+.footer-credit a:hover { text-decoration: underline; }
 
 /* ── Responsive ── */
 @media (min-width: 600px) {
@@ -826,6 +921,26 @@ body {
   .r-btn { min-width: 48px; height: 48px; font-size: 16px; }
   .result-type-title { font-size: 26px; }
   .footer-logo { max-width: 280px; }
+  .welcome-logos img { height: 64px; }
+  .character-display svg { width: 200px; }
+}
+
+/* ⑪ Mobile: smaller logos, bigger footer logo */
+@media (max-width: 599px) {
+  .welcome-logos img {
+    height: 32px;
+  }
+  .footer-logo {
+    max-width: 280px;
+  }
+  /* ⑬ Mobile: enlarge character image */
+  .character-display svg {
+    width: 200px;
+  }
+  #share-card {
+    width: 100%;
+    max-width: 375px;
+  }
 }
 
 /* ── Utility ── */

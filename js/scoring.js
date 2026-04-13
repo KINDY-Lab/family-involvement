@@ -90,21 +90,31 @@ function computeCCNES(answers) {
 function computeTeacherChild(answers) {
   const groups = QUESTIONNAIRE_DATA.teacherChild.groups;
   const allScores = [];
+  const groupScores = [];
 
   groups.forEach(group => {
+    const groupVals = [];
     group.items.forEach(item => {
       const val = answers[item.id];
       if (val !== undefined) {
-        // Reverse code if needed
         const maxVal = group.scale.length;
-        allScores.push(item.reverse ? (maxVal + 1 - val) : val);
+        const scored = item.reverse ? (maxVal + 1 - val) : val;
+        allScores.push(scored);
+        groupVals.push(scored);
       }
+    });
+    groupScores.push({
+      id: group.id,
+      title: group.title.replace(/^.*?[，？]/, '').replace('？', '').substring(0, 8),
+      mean: mean(groupVals),
+      radar: normalizeTC(mean(groupVals))
     });
   });
 
   return {
     mean: mean(allScores),
-    radar: normalizeTC(mean(allScores))
+    radar: normalizeTC(mean(allScores)),
+    groupScores: groupScores
   };
 }
 
@@ -128,8 +138,8 @@ const PARENT_TYPES = {
     color: '#F59E0B',
     colorLight: '#FEF3C7',
     subtitle: '全方位投入 · 情感支持型家长',
-    oneLineDesc: '你以充分的参与和温暖的情感支持，为孩子构建了安全而丰富的成长环境。',
-    description: '你以充分的参与和温暖的情感支持，为孩子构建了一个安全而丰富的成长环境。无论是在家陪伴学习、积极参与学校活动，还是在孩子遇到情绪波动时给予倾听和引导，你都做到了高度的投入。研究表明，这种全面的家庭参与方式，对孩子的学业表现、社交能力和情感健全发展都有显著的正向影响。',
+    oneLineDesc: '您以充分的参与和温暖的情感支持，为孩子构建了安全而丰富的成长环境。',
+    description: '您以充分的参与和温暖的情感支持，为孩子构建了一个安全而丰富的成长环境。无论是在家陪伴学习、积极参与学校活动，还是在孩子遇到情绪波动时给予倾听和引导，您都做到了高度的投入。研究表明，这种全面的<span class="highlight">家庭参与方式</span>，对孩子的<span class="highlight">学业表现</span>、<span class="highlight">社交能力</span>和<span class="highlight">情感健全发展</span>都有显著的正向影响。',
     traits: [
       '积极参与孩子的学习与校园生活，提供丰富的学习资源',
       '善于倾听和回应孩子的情绪，帮助孩子建立情绪词汇',
@@ -137,8 +147,8 @@ const PARENT_TYPES = {
       '在家营造了温暖而有结构的学习氛围'
     ],
     suggestions: [
-      '在充分投入的同时，可以适当给孩子留出一些"自主解决问题"的空间，这有助于培养孩子的独立性和抗挫力',
-      '定期和孩子聊聊"什么事情让你自己觉得很厉害"，强化孩子的内在驱动力，而非仅依赖外部支持'
+      '在充分投入的同时，可以适当给孩子留出一些<span class="highlight">"自主解决问题"</span>的空间，这有助于培养孩子的<span class="highlight">独立性</span>和<span class="highlight">抗挫力</span>',
+      '定期和孩子聊聊"什么事情让您自己觉得很厉害"，强化孩子的<span class="highlight">内在驱动力</span>，而非仅依赖外部支持'
     ]
   },
   ACADEMIC_LEAD: {
@@ -148,8 +158,8 @@ const PARENT_TYPES = {
     color: '#3B82F6',
     colorLight: '#DBEAFE',
     subtitle: '重学习参与 · 结构规划型家长',
-    oneLineDesc: '你对孩子的教育倾注了大量精力，认真负责地规划着学习成长之路。',
-    description: '你对孩子的教育倾注了大量的时间和精力——无论是辅导学习、参与学校活动，还是和老师保持沟通，你都做得认真负责。面对孩子的情绪，你有时倾向于转移注意力或以"要坚强"来回应，这是很多专注于解决问题的家长的自然反应。情绪引导和认知引导同样重要，适当增加情感回应，孩子的心理韧性会更强。',
+    oneLineDesc: '您对孩子的教育倾注了大量精力，认真负责地规划着学习成长之路。',
+    description: '您对孩子的教育倾注了大量的时间和精力——无论是辅导学习、参与学校活动，还是和老师保持沟通，您都做得认真负责。面对孩子的情绪，您有时倾向于转移注意力或以"要坚强"来回应，这是很多专注于解决问题的家长的自然反应。<span class="highlight">情绪引导</span>和<span class="highlight">认知引导</span>同样重要，适当增加<span class="highlight">情感回应</span>，孩子的<span class="highlight">心理韧性</span>会更强。',
     traits: [
       '高度重视孩子的学习发展，积极营造有利于学业的家庭环境',
       '认真参与学校活动和家园沟通，是老师信赖的家长',
@@ -157,8 +167,8 @@ const PARENT_TYPES = {
       '对孩子抱有真诚的期望和关注'
     ],
     suggestions: [
-      '当孩子表达负面情绪时，可以先用一句话"确认"感受，例如"我看到你很失望"，然后再讨论解决方案——这个小小的停顿，对孩子的情绪发展意义很大',
-      '可以在每天睡前设置5分钟的"情绪聊天时间"，问问孩子"今天有什么让你开心或难过的事"，不急着给建议，只是倾听'
+      '当孩子表达负面情绪时，可以先用一句话<span class="highlight">"确认"感受</span>，例如"我看到您很失望"，然后再讨论解决方案——这个小小的停顿，对孩子的<span class="highlight">情绪发展</span>意义很大',
+      '可以在每天睡前设置5分钟的<span class="highlight">"情绪聊天时间"</span>，问问孩子"今天有什么让您开心或难过的事"，不急着给建议，只是<span class="highlight">倾听</span>'
     ]
   },
   WARM_COMPANION: {
@@ -168,17 +178,17 @@ const PARENT_TYPES = {
     color: '#EC4899',
     colorLight: '#FCE7F3',
     subtitle: '重情感陪伴 · 温暖接纳型家长',
-    oneLineDesc: '你对孩子的内心世界高度敏感，善于回应孩子的情绪，创造了温暖有安全感的家庭氛围。',
-    description: '你对孩子的内心世界高度敏感，善于回应孩子的情绪，为孩子创造了一个温暖而有安全感的家庭氛围。孩子在你身边感到被接纳和理解。研究显示，情感安全感是孩子探索世界的基础。在情感联结已经非常稳固的基础上，适当增加一些结构性的学习参与，将让孩子在情感和认知两个维度都得到充分的滋养。',
+    oneLineDesc: '您对孩子的内心世界高度敏感，善于回应孩子的情绪，创造了温暖有安全感的家庭氛围。',
+    description: '您对孩子的内心世界高度敏感，善于回应孩子的情绪，为孩子创造了一个温暖而有安全感的家庭氛围。孩子在您身边感到被接纳和理解。研究显示，<span class="highlight">情感安全感</span>是孩子探索世界的基础。在情感联结已经非常稳固的基础上，适当增加一些<span class="highlight">结构性的学习参与</span>，将让孩子在<span class="highlight">情感</span>和<span class="highlight">认知</span>两个维度都得到充分的滋养。',
     traits: [
       '情感细腻，善于捕捉并回应孩子的情绪需求',
       '为孩子创造了温暖、接纳的家庭氛围',
-      '孩子愿意向你倾诉，亲子关系质量高',
+      '孩子愿意向您倾诉，亲子关系质量高',
       '重视孩子的感受胜过对结果的评判'
     ],
     suggestions: [
-      '可以尝试每周安排一次"家庭学习小时光"——哪怕只是一起读一本绘本或玩一个数字游戏，这种结构性的互动会让孩子受益',
-      '参加1-2次幼儿园的家长开放日或亲子活动，让孩子看到你对他/她校园生活的关注，这会大大增强孩子的归属感'
+      '可以尝试每周安排一次<span class="highlight">"家庭学习小时光"</span>——哪怕只是一起读一本绘本或玩一个数字游戏，这种<span class="highlight">结构性的互动</span>会让孩子受益',
+      '参加1-2次幼儿园的家长开放日或亲子活动，让孩子看到您对他/她校园生活的关注，这会大大增强孩子的<span class="highlight">归属感</span>'
     ]
   },
   GROWTH_EXPLORER: {
@@ -188,17 +198,17 @@ const PARENT_TYPES = {
     color: '#22C55E',
     colorLight: '#DCFCE7',
     subtitle: '持续探索成长 · 自我觉察型家长',
-    oneLineDesc: '你和孩子都在各自的成长旅程中同行，自我觉察是所有改变中最重要的第一步。',
-    description: '你和孩子都在各自的成长旅程中同行。在家庭参与和情绪引导两个方面，你都有很多值得探索的空间。这一类型的家长往往面临较多的生活压力，或正在经历职业、家庭角色的转型期。愿意填写这份问卷，本身就是自我觉察的开始——而自我觉察，正是所有改变中最重要的第一步。',
+    oneLineDesc: '您和孩子都在各自的成长旅程中同行，自我觉察是所有改变中最重要的第一步。',
+    description: '您和孩子都在各自的成长旅程中同行。在家庭参与和情绪引导两个方面，您都有很多值得探索的空间。这一类型的家长往往面临较多的生活压力，或正在经历职业、家庭角色的转型期。愿意填写这份问卷，本身就是<span class="highlight">自我觉察</span>的开始——而自我觉察，正是所有改变中<span class="highlight">最重要的第一步</span>。',
     traits: [
-      '有意识地反思自己的教育方式，具备成长型思维',
+      '有意识地反思自己的教育方式，具备<span class="highlight">成长型思维</span>',
       '对孩子抱有真诚的爱与期望',
       '愿意接受新的育儿理念和方法',
-      '你的孩子，正在一位真诚的家长身边慢慢成长'
+      '您的孩子，正在一位真诚的家长身边慢慢成长'
     ],
     suggestions: [
-      '从一个最小的行动开始：每天睡前问孩子"今天有什么让你开心的事"，这5分钟的连接会产生意想不到的效果',
-      '当孩子有情绪时，先蹲下来，平视孩子，说一声"我在这里"——这个动作本身，就已经是很有力量的情感支持了',
+      '从一个最小的行动开始：每天睡前问孩子"今天有什么让您开心的事"，这5分钟的<span class="highlight">连接</span>会产生意想不到的效果',
+      '当孩子有情绪时，先蹲下来，平视孩子，说一声<span class="highlight">"我在这里"</span>——这个动作本身，就已经是很有力量的<span class="highlight">情感支持</span>了',
       '可以参考一些情绪引导类的亲子绘本（如《菲菲生气了》《我的感觉》系列），和孩子一起阅读，把引导融入日常'
     ]
   }

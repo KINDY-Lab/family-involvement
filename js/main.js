@@ -61,8 +61,9 @@ function updateProgressBar() {
 function nextStep() {
   // Validate current step
   if (currentStep >= 1 && currentStep <= 4) {
-    if (!validateStep(currentStep)) {
-      showValidation('请完成本页所有题目后再继续');
+    const result = validateStep(currentStep);
+    if (result !== true) {
+      highlightUnanswered(result);
       return;
     }
     clearValidation();
@@ -100,13 +101,13 @@ function validateStep1() {
     if (q.required) {
       if (q.type === 'checkbox') {
         const selected = document.querySelectorAll(`input[name="${q.id}"]:checked`);
-        if (selected.length === 0) return false;
+        if (selected.length === 0) return [q.id];
       } else if (q.type === 'text') {
-        if (!answers[q.id] || answers[q.id].trim() === '') return false;
+        if (!answers[q.id] || answers[q.id].trim() === '') return [q.id];
       } else if (q.type === 'slider') {
-        if (answers[q.id] === undefined) return false;
+        if (answers[q.id] === undefined) return [q.id];
       } else {
-        if (answers[q.id] === undefined) return false;
+        if (answers[q.id] === undefined) return [q.id];
       }
     }
   }
@@ -117,27 +118,51 @@ function validateStep2() {
   const fiq = QUESTIONNAIRE_DATA.fiq;
   const allQ = [];
   fiq.sections.forEach(s => s.questions.forEach(q => allQ.push(q)));
-  return allQ.every(q => answers[q.id] !== undefined);
+  const unanswered = allQ.filter(q => answers[q.id] === undefined);
+  return unanswered.length === 0 ? true : unanswered.map(q => q.id);
 }
 
 function validateStep3() {
   const tc = QUESTIONNAIRE_DATA.teacherChild;
+  const unanswered = [];
   for (const g of tc.groups) {
     for (const item of g.items) {
-      if (answers[item.id] === undefined) return false;
+      if (answers[item.id] === undefined) unanswered.push(item.id);
     }
   }
-  return true;
+  return unanswered.length === 0 ? true : unanswered;
 }
 
 function validateStep4() {
   const scenarios = QUESTIONNAIRE_DATA.ccnes.scenarios;
+  const unanswered = [];
   for (const sc of scenarios) {
     for (const r of sc.responses) {
-      if (answers[r.id] === undefined) return false;
+      if (answers[r.id] === undefined) unanswered.push(r.id);
     }
   }
-  return true;
+  return unanswered.length === 0 ? true : unanswered;
+}
+
+function highlightUnanswered(ids) {
+  clearValidation();
+  if (!Array.isArray(ids) || ids.length === 0) return;
+
+  // Highlight first unanswered card/row
+  const firstId = ids[0];
+  const card = document.getElementById('card_' + firstId) || document.getElementById('matrix_row_' + firstId) || document.getElementById('scenario_' + firstId.replace(/_\d+$/, ''));
+  if (card) {
+    card.classList.add('unanswered-highlight');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Also highlight all unanswered
+  ids.forEach(id => {
+    const el = document.getElementById('card_' + id) || document.getElementById('matrix_row_' + id);
+    if (el) el.classList.add('unanswered-highlight');
+  });
+
+  showValidation('还有 ' + ids.length + ' 题未完成，请检查标红的项目');
 }
 
 function showValidation(msg) {
@@ -153,6 +178,10 @@ function clearValidation() {
     const el = document.getElementById('validationMsg' + i);
     if (el) { el.textContent = ''; el.style.display = 'none'; }
   }
+  // Remove all unanswered highlights
+  document.querySelectorAll('.unanswered-highlight').forEach(el => {
+    el.classList.remove('unanswered-highlight');
+  });
 }
 
 // ── Render Step 1: Demographics ──
@@ -379,6 +408,7 @@ function renderStep3() {
   container.innerHTML = '';
 
   const tc = QUESTIONNAIRE_DATA.teacherChild;
+  let qNum = 1;
 
   // Teacher name input
   const nameGroup = document.createElement('div');
@@ -394,23 +424,17 @@ function renderStep3() {
     gDiv.className = 'matrix-group';
 
     let html = `<div class="matrix-title">${group.title}</div>`;
-    // Scale labels
-    html += `<div class="matrix-scale-labels">`;
-    html += `<div style="flex:1;min-width:140px"></div>`;
-    group.scale.forEach(s => {
-      html += `<div class="matrix-scale-label">${s}</div>`;
-    });
-    html += `</div>`;
 
     group.items.forEach(item => {
-      html += `<div class="matrix-row" id="matrix_row_${item.id}">`;
-      html += `<div class="matrix-item-text">${item.text}</div>`;
-      html += `<div class="matrix-options">`;
+      html += `<div class="matrix-row matrix-row-vertical" id="matrix_row_${item.id}">`;
+      html += `<div class="matrix-item-text"><span class="q-num" style="display:inline">Q${qNum}</span> ${item.text}</div>`;
+      html += `<div class="matrix-options matrix-options-full">`;
       group.scale.forEach((s, i) => {
         const val = i + 1;
-        html += `<button class="matrix-opt" data-q="${item.id}" data-v="${val}" onclick="selectMatrix('${item.id}',${val},this)">${s.charAt(0)}</button>`;
+        html += `<button class="matrix-opt matrix-opt-full" data-q="${item.id}" data-v="${val}" onclick="selectMatrix('${item.id}',${val},this)">${s}</button>`;
       });
       html += `</div></div>`;
+      qNum++;
     });
 
     gDiv.innerHTML = html;
@@ -447,6 +471,14 @@ function renderStep4() {
 
   const ccnes = QUESTIONNAIRE_DATA.ccnes;
 
+  // Scale legend at the top
+  const legend = document.createElement('div');
+  legend.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;';
+  ccnes.scaleLabels.forEach((label, i) => {
+    legend.innerHTML += `<span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">${i+1} = ${label}</span>`;
+  });
+  container.appendChild(legend);
+
   ccnes.scenarios.forEach((sc, idx) => {
     const card = document.createElement('div');
     card.className = 'scenario-card';
@@ -471,14 +503,6 @@ function renderStep4() {
     card.innerHTML = html;
     container.appendChild(card);
   });
-
-  // Scale legend
-  const legend = document.createElement('div');
-  legend.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;';
-  ccnes.scaleLabels.forEach((label, i) => {
-    legend.innerHTML += `<span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">${i+1} = ${label}</span>`;
-  });
-  container.appendChild(legend);
 
   restoreCCNESAnswers();
 }
@@ -534,7 +558,8 @@ async function submitQuestionnaire() {
     radar_comm: fiqScores.radar_comm,
     radar_emotion_support: ccnesScores.radar_emotion_support,
     radar_problem_solving: ccnesScores.radar_problem_solving,
-    radar_teacher_child: tcScores.radar
+    radar_teacher_child: tcScores.radar,
+    tc_group_scores: tcScores.groupScores
   };
 
   // Save to database
@@ -566,8 +591,8 @@ function renderResults(typeData, radarData) {
   results.style.display = 'block';
   results.classList.add('active');
 
-  // Header
-  document.getElementById('resultTypeTitle').textContent = `你是孩子成长路上的「${typeData.name}」！`;
+  // Header — use innerHTML for controlled line break
+  document.getElementById('resultTypeTitle').innerHTML = `您是孩子成长路上的<br>「<span style="display:inline-block">${typeData.name}</span>」！`;
   document.getElementById('resultTypeTitle').style.color = typeData.color;
   document.getElementById('resultTypeEn').textContent = typeData.enName;
 
@@ -576,11 +601,27 @@ function renderResults(typeData, radarData) {
   document.getElementById('characterName').textContent = typeData.name;
   document.getElementById('characterName').style.color = typeData.color;
 
-  // Radar chart
-  renderRadarChart('radarChart', radarData, typeData.color, true);
+  // Radar chart (main, without teacher-child)
+  renderRadarChart('radarChart', radarData, typeData.color, false);
 
-  // Description
-  document.getElementById('resultDescription').textContent = typeData.description;
+  // Teacher-child radar chart
+  if (radarData.tc_group_scores) {
+    setTimeout(() => {
+      renderTCRadarChart('tcRadarChart', radarData.tc_group_scores);
+      // Trigger animation
+      const tcWrapper = document.querySelector('.chart-secondary .chart-animate');
+      if (tcWrapper) tcWrapper.classList.add('visible');
+    }, 400);
+  }
+
+  // Trigger main radar animation
+  setTimeout(() => {
+    const mainWrapper = document.querySelector('.chart-section .chart-animate');
+    if (mainWrapper) mainWrapper.classList.add('visible');
+  }, 100);
+
+  // Description (innerHTML for highlights)
+  document.getElementById('resultDescription').innerHTML = typeData.description;
 
   // Traits
   const traitsList = document.getElementById('resultTraits');
@@ -607,7 +648,7 @@ function renderShareCard(typeData, radarData) {
 
   document.getElementById('shareTypeName').textContent = `我是「${typeData.name}」`;
   document.getElementById('shareTypeSub').textContent = typeData.subtitle;
-  document.getElementById('shareDesc').textContent = typeData.oneLineDesc;
+  document.getElementById('shareDesc').textContent = typeData.oneLineDesc.replace(/你/g, '您');
 
   // Render share radar
   setTimeout(() => {
