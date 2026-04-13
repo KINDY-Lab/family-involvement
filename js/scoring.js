@@ -146,10 +146,6 @@ const PARENT_TYPES = {
       '与幼儿园老师保持良好沟通，是家园合作的积极推动者',
       '在家营造了温暖而有结构的学习氛围'
     ],
-    suggestions: [
-      '在充分投入的同时，可以适当给孩子留出一些<span class="highlight">"自主解决问题"</span>的空间，这有助于培养孩子的<span class="highlight">独立性</span>和<span class="highlight">抗挫力</span>',
-      '定期和孩子聊聊"什么事情让您自己觉得很厉害"，强化孩子的<span class="highlight">内在驱动力</span>，而非仅依赖外部支持'
-    ]
   },
   ACADEMIC_LEAD: {
     code: 'ACADEMIC_LEAD',
@@ -166,10 +162,6 @@ const PARENT_TYPES = {
       '擅长规划、有结构地支持孩子',
       '对孩子抱有真诚的期望和关注'
     ],
-    suggestions: [
-      '当孩子表达负面情绪时，可以先用一句话<span class="highlight">"确认"感受</span>，例如"我看到您很失望"，然后再讨论解决方案——这个小小的停顿，对孩子的<span class="highlight">情绪发展</span>意义很大',
-      '可以在每天睡前设置5分钟的<span class="highlight">"情绪聊天时间"</span>，问问孩子"今天有什么让您开心或难过的事"，不急着给建议，只是<span class="highlight">倾听</span>'
-    ]
   },
   WARM_COMPANION: {
     code: 'WARM_COMPANION',
@@ -186,10 +178,6 @@ const PARENT_TYPES = {
       '孩子愿意向您倾诉，亲子关系质量高',
       '重视孩子的感受胜过对结果的评判'
     ],
-    suggestions: [
-      '可以尝试每周安排一次<span class="highlight">"家庭学习小时光"</span>——哪怕只是一起读一本绘本或玩一个数字游戏，这种<span class="highlight">结构性的互动</span>会让孩子受益',
-      '参加1-2次幼儿园的家长开放日或亲子活动，让孩子看到您对他/她校园生活的关注，这会大大增强孩子的<span class="highlight">归属感</span>'
-    ]
   },
   GROWTH_EXPLORER: {
     code: 'GROWTH_EXPLORER',
@@ -206,157 +194,72 @@ const PARENT_TYPES = {
       '愿意接受新的育儿理念和方法',
       '您的孩子，正在一位真诚的家长身边慢慢成长'
     ],
-    suggestions: [
-      '从一个最小的行动开始：每天睡前问孩子"今天有什么让您开心的事"，这5分钟的<span class="highlight">连接</span>会产生意想不到的效果',
-      '当孩子有情绪时，先蹲下来，平视孩子，说一声<span class="highlight">"我在这里"</span>——这个动作本身，就已经是很有力量的<span class="highlight">情感支持</span>了',
-      '可以参考一些情绪引导类的亲子绘本（如《菲菲生气了》《我的感觉》系列），和孩子一起阅读，把引导融入日常'
-    ]
   }
 };
 
-// ── Character SVG Data (extracted from combined SVG) ──
-// Each character extracted from parent_type_characters.svg with translated coordinates
-const CHARACTER_SVGS = {
-  FULL_ESCORT: `<svg viewBox="0 0 170 285" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="140" height="255" rx="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
-    <path d="M41 73 Q40 45 56 38 Q70 32 84 38 Q100 45 99 73" fill="#7C4A1C"/>
-    <circle cx="70" cy="78" r="30" fill="#F5C4A7"/>
-    <circle cx="70" cy="47" r="10" fill="#7C4A1C"/>
-    <circle cx="64" cy="52" r="7" fill="#7C4A1C"/>
-    <circle cx="76" cy="52" r="7" fill="#7C4A1C"/>
-    <ellipse cx="53" cy="84" rx="7" ry="4" fill="#F8A0B8" opacity="0.55"/>
-    <ellipse cx="87" cy="84" rx="7" ry="4" fill="#F8A0B8" opacity="0.55"/>
-    <ellipse cx="62" cy="76" rx="4.5" ry="5" fill="#2D1010"/>
-    <ellipse cx="78" cy="76" rx="4.5" ry="5" fill="#2D1010"/>
-    <circle cx="63.5" cy="74" r="1.6" fill="white"/>
-    <circle cx="79.5" cy="74" r="1.6" fill="white"/>
-    <path d="M57 68 Q62 65 67 67" stroke="#7C4A1C" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M73 67 Q78 65 83 68" stroke="#7C4A1C" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M61 88 Q70 97 79 88" stroke="#D07070" stroke-width="2" fill="#F4C0B0" stroke-linecap="round"/>
-    <rect x="64" y="106" width="12" height="10" rx="3" fill="#F5C4A7"/>
-    <rect x="44" y="113" width="52" height="62" rx="15" fill="#F59E0B"/>
-    <path d="M64 113 L70 125 L76 113" fill="#FFFBEB" opacity="0.5"/>
-    <path d="M47 130 Q28 125 13 123" stroke="#F59E0B" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <path d="M93 130 Q112 125 127 123" stroke="#F59E0B" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <circle cx="11" cy="122" r="8" fill="#F5C4A7"/>
-    <circle cx="129" cy="122" r="8" fill="#F5C4A7"/>
-    <path d="M70 135 L72 140 L78 140 L73 143 L75 148 L70 146 L65 148 L67 143 L62 140 L68 140 Z" fill="#FFFBEB" opacity="0.8"/>
-    <path d="M22 59 L23.2 63 L27.5 63 L24 66 L25.2 70 L22 68 L18.8 70 L20 66 L16.5 63 L20.8 63 Z" fill="#FBBF24" opacity="0.65"/>
-    <circle cx="116" cy="53" r="3" fill="#F59E0B" opacity="0.5"/>
-    <circle cx="122" cy="60" r="2" fill="#FBBF24" opacity="0.4"/>
-    <text x="70" y="198" fill="#92400E" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="600" text-anchor="middle">全情护航者</text>
-    <text x="70" y="213" fill="#B45309" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">全方位投入</text>
-    <rect x="38" y="223" width="64" height="17" rx="8.5" fill="#F59E0B" opacity="0.18"/>
-    <text x="70" y="235" fill="#92400E" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">护航型家长</text>
-  </svg>`,
-
-  ACADEMIC_LEAD: `<svg viewBox="0 0 170 285" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="140" height="255" rx="14" fill="#DBEAFE" stroke="#3B82F6" stroke-width="1.5"/>
-    <path d="M42 75 Q41 49 56 42 Q70 36 84 42 Q99 49 98 75" fill="#1A1A2E"/>
-    <circle cx="70" cy="78" r="30" fill="#F0C090"/>
-    <rect x="54" y="73" width="13" height="11" rx="4" fill="none" stroke="#2D2D2D" stroke-width="1.8"/>
-    <rect x="70" y="73" width="13" height="11" rx="4" fill="none" stroke="#2D2D2D" stroke-width="1.8"/>
-    <line x1="67" y1="78.5" x2="70" y2="78.5" stroke="#2D2D2D" stroke-width="1.5"/>
-    <line x1="52" y1="78.5" x2="54" y2="78.5" stroke="#2D2D2D" stroke-width="1.5"/>
-    <line x1="83" y1="78.5" x2="86" y2="78.5" stroke="#2D2D2D" stroke-width="1.5"/>
-    <ellipse cx="60.5" cy="78.5" rx="3.8" ry="3.8" fill="#1A1A2E"/>
-    <ellipse cx="76.5" cy="78.5" rx="3.8" ry="3.8" fill="#1A1A2E"/>
-    <circle cx="61.8" cy="76.8" r="1.2" fill="white"/>
-    <circle cx="77.8" cy="76.8" r="1.2" fill="white"/>
-    <path d="M55 68 Q60.5 66 66 68" stroke="#1A1A2E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M72 68 Q77.5 66 83 68" stroke="#1A1A2E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M63 90 Q70 96 77 90" stroke="#B07060" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <ellipse cx="55" cy="86" rx="5.5" ry="3" fill="#F4A0A0" opacity="0.3"/>
-    <ellipse cx="85" cy="86" rx="5.5" ry="3" fill="#F4A0A0" opacity="0.3"/>
-    <rect x="64" y="106" width="12" height="10" rx="3" fill="#F0C090"/>
-    <rect x="44" y="113" width="52" height="62" rx="15" fill="#3B82F6"/>
-    <path d="M64 113 L70 122 L76 113" fill="#1D4ED8"/>
-    <path d="M47 133 Q42 145 35 148" stroke="#3B82F6" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <rect x="22" y="144" width="19" height="24" rx="3" fill="#1D4ED8"/>
-    <rect x="24" y="146" width="15" height="20" rx="2" fill="#EFF6FF"/>
-    <line x1="27" y1="151" x2="36" y2="151" stroke="#93C5FD" stroke-width="1.2"/>
-    <line x1="27" y1="155" x2="36" y2="155" stroke="#93C5FD" stroke-width="1.2"/>
-    <line x1="27" y1="159" x2="33" y2="159" stroke="#93C5FD" stroke-width="1.2"/>
-    <path d="M93 133 Q103 141 105 151" stroke="#3B82F6" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <circle cx="105" cy="153" r="8" fill="#F0C090"/>
-    <rect x="117" y="47" width="13" height="17" rx="2" fill="#93C5FD" opacity="0.5"/>
-    <rect x="119" y="49" width="9" height="13" rx="1" fill="#EFF6FF" opacity="0.8"/>
-    <line x1="121" y1="53" x2="126" y2="53" stroke="#3B82F6" stroke-width="1" opacity="0.6"/>
-    <line x1="121" y1="57" x2="126" y2="57" stroke="#3B82F6" stroke-width="1" opacity="0.6"/>
-    <text x="70" y="198" fill="#1E40AF" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="600" text-anchor="middle">学业主导者</text>
-    <text x="70" y="213" fill="#1D4ED8" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">重学习参与</text>
-    <rect x="38" y="223" width="64" height="17" rx="8.5" fill="#3B82F6" opacity="0.18"/>
-    <text x="70" y="235" fill="#1E40AF" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">主导型家长</text>
-  </svg>`,
-
-  WARM_COMPANION: `<svg viewBox="0 0 170 285" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="140" height="255" rx="14" fill="#FCE7F3" stroke="#EC4899" stroke-width="1.5"/>
-    <path d="M42 75 Q41 48 56 41 Q71 35 85 41 Q99 48 98 75" fill="#C07040"/>
-    <path d="M42 75 Q39 93 42 106" fill="#C07040"/>
-    <path d="M98 75 Q101 93 98 106" fill="#C07040"/>
-    <circle cx="70" cy="78" r="30" fill="#FAD0A8"/>
-    <ellipse cx="54" cy="85" rx="8" ry="4.5" fill="#F8A0B8" opacity="0.6"/>
-    <ellipse cx="86" cy="85" rx="8" ry="4.5" fill="#F8A0B8" opacity="0.6"/>
-    <ellipse cx="61" cy="75" rx="5" ry="5.5" fill="#2D1010"/>
-    <ellipse cx="79" cy="75" rx="5" ry="5.5" fill="#2D1010"/>
-    <circle cx="62.5" cy="73" r="1.8" fill="white"/>
-    <circle cx="80.5" cy="73" r="1.8" fill="white"/>
-    <path d="M56 67 Q61 64 66 66" stroke="#C07040" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M74 66 Q79 64 84 67" stroke="#C07040" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M59 89 Q70 99 81 89" stroke="#D07080" stroke-width="2" fill="#F4B0C0" stroke-linecap="round"/>
-    <rect x="64" y="106" width="12" height="10" rx="3" fill="#FAD0A8"/>
-    <rect x="44" y="113" width="52" height="62" rx="15" fill="#EC4899"/>
-    <path d="M57 113 Q61 119 65 113 Q69 119 73 113 Q77 119 81 113" stroke="#FBCFE8" stroke-width="1.5" fill="none"/>
-    <path d="M47 133 Q34 128 25 130" stroke="#EC4899" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <circle cx="23" cy="129" r="8" fill="#FAD0A8"/>
-    <path d="M93 133 Q89 140 80 144" stroke="#EC4899" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <circle cx="79" cy="145" r="8" fill="#FAD0A8"/>
-    <path d="M70 138 C65 134 61 130 63 126 C65 122 68 123 70 126 C72 123 75 122 77 126 C79 130 76 134 70 138Z" fill="#FBCFE8" opacity="0.8"/>
-    <path d="M111 58 C108 55 106 52 108 50 C110 48 111 49.5 112 51 C113 49.5 114 48 116 50 C118 52 116 55 111 58Z" fill="#EC4899" opacity="0.5"/>
-    <path d="M33 57 C30 54 28 51 30 49 C32 47 33 48.5 34 50 C35 48.5 36 47 38 49 C40 51 38 54 33 57Z" fill="#F472B6" opacity="0.45"/>
-    <text x="70" y="198" fill="#9D174D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="600" text-anchor="middle">温暖陪伴者</text>
-    <text x="70" y="213" fill="#BE185D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">重情感陪伴</text>
-    <rect x="38" y="223" width="64" height="17" rx="8.5" fill="#EC4899" opacity="0.18"/>
-    <text x="70" y="235" fill="#9D174D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">陪伴型家长</text>
-  </svg>`,
-
-  GROWTH_EXPLORER: `<svg viewBox="0 0 170 285" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="140" height="255" rx="14" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5"/>
-    <path d="M42 75 Q41 49 56 42 Q71 36 85 42 Q99 49 98 75" fill="#3D4A28"/>
-    <path d="M70 36 Q74 29 79 33" stroke="#3D4A28" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M66 38 Q61 31 64 35" stroke="#3D4A28" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <circle cx="70" cy="78" r="30" fill="#F5D5B0"/>
-    <ellipse cx="54" cy="85" rx="6.5" ry="3.5" fill="#F4A0A0" opacity="0.35"/>
-    <ellipse cx="86" cy="85" rx="6.5" ry="3.5" fill="#F4A0A0" opacity="0.35"/>
-    <ellipse cx="62" cy="76" rx="4.5" ry="5" fill="#2A3520"/>
-    <ellipse cx="78" cy="76" rx="5" ry="5.5" fill="#2A3520"/>
-    <circle cx="63.5" cy="74" r="1.6" fill="white"/>
-    <circle cx="79.5" cy="74" r="1.8" fill="white"/>
-    <path d="M57 68 Q62 66 67 68" stroke="#3D4A28" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M72 65.5 Q78 63 84 66" stroke="#3D4A28" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M63 88 Q70 95 77 88" stroke="#8B6040" stroke-width="2" fill="#F0D0A0" stroke-linecap="round"/>
-    <rect x="64" y="106" width="12" height="10" rx="3" fill="#F5D5B0"/>
-    <rect x="44" y="113" width="52" height="62" rx="15" fill="#22C55E"/>
-    <rect x="58" y="135" width="16" height="12" rx="3" fill="#16A34A"/>
-    <path d="M47 133 Q37 128 24 127" stroke="#22C55E" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <path d="M15 127 L14 137 Q14 140 18 140 L38 140 Q42 140 42 137 L41 127 Z" fill="#A0652A"/>
-    <ellipse cx="28" cy="127" rx="14" ry="5" fill="#7B4518"/>
-    <line x1="28" y1="123" x2="28" y2="117" stroke="#16A34A" stroke-width="2"/>
-    <path d="M28 121 Q22 116 18 117" stroke="#16A34A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M28 119 Q34 114 38 115" stroke="#22C55E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <ellipse cx="18" cy="117" rx="6" ry="3.5" fill="#22C55E" transform="rotate(-20,18,117)"/>
-    <ellipse cx="37" cy="115" rx="6" ry="3.5" fill="#16A34A" transform="rotate(20,37,115)"/>
-    <path d="M93 133 Q105 125 114 122" stroke="#22C55E" stroke-width="10" fill="none" stroke-linecap="round"/>
-    <circle cx="116" cy="121" r="8" fill="#F5D5B0"/>
-    <circle cx="126" cy="53" r="3" fill="#22C55E" opacity="0.55"/>
-    <circle cx="133" cy="60" r="2" fill="#4ADE80" opacity="0.45"/>
-    <circle cx="124" cy="63" r="1.8" fill="#16A34A" opacity="0.5"/>
-    <line x1="85" y1="50" x2="85" y2="42" stroke="#22C55E" stroke-width="1.5" opacity="0.55"/>
-    <ellipse cx="81" cy="40" rx="5" ry="3" fill="#22C55E" opacity="0.5" transform="rotate(-15,81,40)"/>
-    <ellipse cx="90" cy="39" rx="5" ry="3" fill="#4ADE80" opacity="0.45" transform="rotate(15,90,39)"/>
-    <text x="70" y="198" fill="#14532D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="600" text-anchor="middle">成长探索者</text>
-    <text x="70" y="213" fill="#15803D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">持续探索成长</text>
-    <rect x="38" y="223" width="64" height="17" rx="8.5" fill="#22C55E" opacity="0.18"/>
-    <text x="70" y="235" fill="#14532D" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" text-anchor="middle">探索型家长</text>
-  </svg>`
+// ── Character Image Paths (JPG) ──
+const CHARACTER_IMAGES = {
+  FULL_ESCORT: 'assets/characters/全情护航者.jpg',
+  ACADEMIC_LEAD: 'assets/characters/学业主导者.jpg',
+  WARM_COMPANION: 'assets/characters/温暖陪伴者.jpg',
+  GROWTH_EXPLORER: 'assets/characters/成长探索者.jpg'
 };
+
+// ── Suggestions Pool + Random Draw ──
+const SUGGESTIONS_POOL = {
+
+  FULL_ESCORT: [
+    "今天试试这个：做一件事之前，先问孩子<b>「你想怎么做？」</b>——哪怕结果不完美，自己决定的事孩子会更投入。",
+    "给孩子设置一个<b>「独立时间」</b>，每天 15-30 分钟让他/她自己玩、自己解决问题，你不介入。这是培养抗挫力最温和的方式。",
+    "下次孩子遇到困难，忍住「我来帮你」，改说<b>「你觉得可以怎么办？」</b>——答案不重要，思考过程才是目标。",
+    "试着减少一项你目前为孩子安排的课外活动，把那段时间<b>还给孩子自由支配</b>，观察他/她会做什么。",
+    "每周和孩子做一次<b>「小小复盘」</b>：这周你自己解决了什么事情？感觉怎么样？——帮孩子建立自我效能感。",
+    "当孩子完成一件事，把「你真棒」换成<b>「你是怎么做到的？」</b>——引导孩子归因于自身努力，而非天赋或外部评价。",
+    "尝试让孩子参与一个<b>家庭小决策</b>（比如周末去哪玩），哪怕是小事，也能培养主人翁意识。",
+    "记录孩子这个月<b>「自己搞定的事」清单</b>，月底一起回顾——这个仪式感会让孩子对独立充满自豪。",
+  ],
+
+  ACADEMIC_LEAD: [
+    "今晚睡前试试这个：关掉所有「学了什么」的话题，只问孩子<b>「今天有什么让你开心或难过的事」</b>——然后只听，不评价。",
+    "当孩子哭或发脾气，先说一句<b>「我看到你很[伤心/生气/委屈]」</b>，停顿 3 秒，再讨论解决方案。这 3 秒对孩子的情绪发展价值巨大。",
+    "这周选一个孩子感兴趣但「没有学习价值」的活动陪他/她做——<b>纯粹的快乐也是成长的养分</b>。",
+    "试着在孩子情绪爆发时<b>蹲下来，和孩子视线平齐</b>，只说「我在这里」——不分析，不解决，就是陪着。",
+    "找一本情绪主题绘本（如《菲菲生气了》），睡前一起读，问孩子<b>「你有没有这样的感觉过？」</b>——让情绪话题变得日常。",
+    "这个月记录一次：孩子表达情绪时，你的第一反应是什么？是转移、讲道理还是共情？<b>觉察是改变的起点。</b>",
+    "孩子说「我不想去幼儿园」时，比起解释为什么要去，先问一句<b>「是什么让你不想去？」</b>——答案可能出乎你意料。",
+    "设定一个<b>「无目标时间」</b>——每周一次，和孩子一起做一件没有任何教育目的的事：涂色、捏泥、发呆都行。",
+  ],
+
+  WARM_COMPANION: [
+    "这周试试一个小结构：每天晚饭后 10 分钟<b>「数字游戏时间」</b>——数豆子、玩扑克牌数数都算，把学习藏进游戏里。",
+    "下次去幼儿园接孩子时，多停留 5 分钟，和老师随口聊一句<b>「孩子最近有什么新变化」</b>——沟通不需要正式，点滴了解就够。",
+    "在家设置一个小小的<b>「学习角」</b>：一张矮桌、几本书、一些画笔——不是为了让孩子学习，而是让学习有仪式感的空间。",
+    "参加下一次幼儿园<b>开放日或亲子活动</b>，让孩子看到你出现在他/她的校园里——这个画面对孩子的归属感影响极大。",
+    "每周和孩子一起读一本绘本，读完问<b>「你最喜欢哪一页？为什么？」</b>——简单的对话就是认知和语言的双重练习。",
+    "给孩子建一个<b>「成长本」</b>：每周贴一张他/她的画或写一句他/她说过的话——这个习惯本身就在强化孩子的学习动机。",
+    "试着联系一位孩子班上的家长，安排一次孩子的 <b>playdate</b>——社交网络对孩子和你都有益。",
+    "在家里建立一个小惯例：每天早晨说一件<b>「今天我期待的事」</b>，晚上说一件「今天我学到的事」——把学习变成家庭文化。",
+  ],
+
+  GROWTH_EXPLORER: [
+    "从今晚开始，睡前问孩子一个问题：<b>「今天有什么让你开心的事？」</b>——就这一个问题，每天坚持，一个月后你会看到变化。",
+    "当孩子有情绪时，先蹲下来，平视孩子，说<b>「我在这里」</b>——这个动作本身，比任何道理都更有安抚力量。",
+    "这周选一件小事<b>让孩子自己决定</b>（比如今晚吃什么水果、穿哪件睡衣）——参与感从小事开始建立。",
+    "找一本亲子情绪绘本，比如<b>《我的感觉》系列</b>，睡前一起看——把引导融入日常，比专门「教育」轻松得多。",
+    "试试这个仪式：每周日晚上问孩子<b>「这周你最勇敢的事是什么？」</b>——帮孩子发现自己的力量。",
+    "如果时间是最大的障碍，就从<b>「高质量的 15 分钟」</b>开始：放下手机，全神贯注地陪孩子做任何他/她想做的事。",
+    "联系孩子的班主任，发一条简单的消息：<b>「孩子最近在家有点 X，请问在学校有没有类似情况？」</b>——迈出沟通第一步。",
+    "给自己一个承诺：这个月参加幼儿园的<b>一次家长活动</b>。不需要做什么，出现本身就是对孩子最有力的支持。",
+  ],
+};
+
+// 随机抽取 n 条建议（默认3条）
+function getRandomSuggestions(type, n = 3) {
+  const pool = [...SUGGESTIONS_POOL[type]];
+  const result = [];
+  while (result.length < n && pool.length > 0) {
+    const idx = Math.floor(Math.random() * pool.length);
+    result.push(pool.splice(idx, 1)[0]);
+  }
+  return result;
+}

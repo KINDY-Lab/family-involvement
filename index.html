@@ -36,8 +36,8 @@
   <!-- ── Welcome ── -->
   <div class="welcome-section" id="welcome">
     <div class="welcome-logos">
-      <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS">
-      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab">
+      <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" loading="lazy">
+      <img src="assets/logo/Kindy_lab.webp" alt="KINDY Lab" loading="lazy">
     </div>
     <h2 class="welcome-title">学前儿童家庭教育环境与情绪引导方式调查</h2>
     <div class="welcome-desc">
@@ -115,7 +115,7 @@
   <!-- ── Results ── -->
   <div class="result-section" id="resultsSection">
     <div class="result-header">
-      <img src="assets/logo/Kindy_lab.png" alt="KINDY Lab" class="result-logo" style="mix-blend-mode:multiply;">
+      <img src="assets/logo/Kindy_lab.webp" alt="KINDY Lab" class="result-logo" style="mix-blend-mode:multiply;" width="120" height="40" loading="lazy">
       <h2 class="result-type-title" id="resultTypeTitle"></h2>
       <p class="result-type-en" id="resultTypeEn"></p>
     </div>
@@ -155,18 +155,106 @@
     <!-- Share Section -->
     <div class="share-section">
       <div class="share-card-wrapper">
-        <div id="share-card" style="border-top: 6px solid #F59E0B;">
-          <p style="font-size:11px;color:#C9A227;margin:0 0 16px;">香港中文大学（深圳）人文社科学院 KINDY Lab</p>
-          <div id="shareCharacter" style="margin:0 auto 12px;"></div>
-          <h2 id="shareTypeName" style="font-size:22px;font-weight:700;color:#1F2937;margin:0 0 4px;">我是「全情护航者」</h2>
-          <p id="shareTypeSub" style="font-size:13px;color:#6B7280;margin:0 0 20px;">全方位投入 · 情感支持型家长</p>
-          <canvas id="share-radar" width="280" height="220"></canvas>
-          <p id="shareDesc" style="font-size:13px;color:#374151;line-height:1.7;margin:16px 0;"></p>
-          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0 0;">
-            <img src="assets/qrcode.png" alt="扫码参与测评" style="width:80px;height:80px;border-radius:8px;">
+        <div id="share-card" style="
+          width: 375px;
+          background: linear-gradient(160deg, #1a0a3c 0%, #3b1278 55%, #6b2fa0 100%);
+          border-radius: 24px;
+          overflow: hidden;
+          font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+          position: relative;
+          text-align: center;
+          padding-bottom: 28px;
+        ">
+          <!-- 顶部金色装饰线 -->
+          <div style="height:5px; background:linear-gradient(90deg,#c9a227,#f0d080,#c9a227);"></div>
+
+          <!-- 机构名 -->
+          <p style="font-size:11px; color:#f0d080; letter-spacing:1.5px; margin:14px 0 0; opacity:0.9;">
+            香港中文大学（深圳）· 家庭教育研究
+          </p>
+
+          <!-- 角色图（圆形背景） -->
+          <div style="
+            width:140px; height:140px;
+            background:rgba(255,255,255,0.12);
+            border-radius:50%;
+            margin:16px auto 10px;
+            display:flex; align-items:center; justify-content:center;
+            border:2px solid rgba(255,255,255,0.2);
+            overflow:hidden;
+          ">
+            <img id="share-character-img"
+                 src=""
+                 alt="家长类型角色"
+                 style="width:120px; height:120px; object-fit:contain;"
+            />
+          </div>
+
+          <!-- 类型名称 -->
+          <h2 id="share-type-name" style="
+            font-size:26px; font-weight:800;
+            color:#ffffff; margin:0;
+            letter-spacing:2px;
+            text-shadow:0 2px 12px rgba(0,0,0,0.3);
+          "></h2>
+
+          <!-- 类型标签 -->
+          <div id="share-type-tag" style="
+            display:inline-block;
+            margin:8px auto 14px;
+            padding:4px 16px;
+            background:rgba(201,162,39,0.25);
+            border:1px solid #c9a227;
+            border-radius:20px;
+            font-size:12px; color:#f0d080;
+            letter-spacing:1px;
+          "></div>
+
+          <!-- 雷达图 -->
+          <div style="margin:0 auto 14px; width:270px; height:210px; position:relative;">
+            <canvas id="share-radar-canvas" width="270" height="210"></canvas>
+          </div>
+
+          <!-- 类型描述（2-3句） -->
+          <p id="share-description" style="
+            font-size:13px; color:rgba(255,255,255,0.88);
+            line-height:1.8; margin:0 24px 16px;
+          "></p>
+
+          <!-- 分隔线 -->
+          <div style="height:1px; background:rgba(255,255,255,0.15); margin:0 24px 14px;"></div>
+
+          <!-- 成长建议标题 -->
+          <p style="font-size:12px; color:#f0d080; letter-spacing:1px; margin:0 24px 10px; text-align:left;">
+            ✦ 专属成长建议
+          </p>
+
+          <!-- 建议列表 -->
+          <ul id="share-suggestions" style="
+            text-align:left; margin:0 24px 16px;
+            padding-left:16px;
+            font-size:12px; color:rgba(255,255,255,0.82);
+            line-height:1.9;
+          "></ul>
+
+          <!-- 分隔线 -->
+          <div style="height:1px; background:rgba(255,255,255,0.15); margin:0 24px 14px;"></div>
+
+          <!-- 底部：二维码 + 扫码文字 -->
+          <div style="
+            display:flex; align-items:center; justify-content:center;
+            gap:12px; padding:0 24px;
+          ">
+            <img id="share-qrcode" src="assets/qrcode.png" alt="扫码参与测评"
+                 style="width:52px; height:52px; border-radius:6px; background:white; padding:3px;"
+            />
             <div style="text-align:left;">
-              <p style="font-size:10px;color:#9CA3AF;margin:0;">扫码参与测评</p>
-              <p style="font-size:10px;color:#9CA3AF;margin:2px 0 0;">了解您的家长类型</p>
+              <p style="font-size:12px; color:rgba(255,255,255,0.9); margin:0; font-weight:600;">
+                扫码测一测
+              </p>
+              <p style="font-size:11px; color:rgba(255,255,255,0.55); margin:4px 0 0; line-height:1.5;">
+                你是哪种家长类型？<br>了解你的家庭教育风格
+              </p>
             </div>
           </div>
         </div>
@@ -182,7 +270,7 @@
 
   <!-- ── Footer ── -->
   <div class="footer">
-    <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="footer-logo">
+    <img src="assets/logo/cuhksz-hss-logo.png" alt="CUHK-Shenzhen HSS" class="footer-logo" loading="lazy">
     <div class="footer-line">香港中文大学（深圳）人文社科学院 KINDY Lab</div>
     <div class="footer-line">The Chinese University of Hong Kong, Shenzhen</div>
     <div class="footer-line">For academic research only · 仅供学术研究使用</div>

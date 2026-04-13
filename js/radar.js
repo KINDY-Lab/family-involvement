@@ -16,7 +16,7 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
     radarInstance.destroy();
     radarInstance = null;
   }
-  if (canvasId === 'share-radar' && shareRadarInstance) {
+  if ((canvasId === 'share-radar' || canvasId === 'share-radar-canvas') && shareRadarInstance) {
     shareRadarInstance.destroy();
     shareRadarInstance = null;
   }
@@ -96,7 +96,7 @@ function renderRadarChart(canvasId, radarData, typeColor, includeTeacherChild) {
   });
 
   if (canvasId === 'radarChart') radarInstance = chart;
-  if (canvasId === 'share-radar') shareRadarInstance = chart;
+  if (canvasId === 'share-radar' || canvasId === 'share-radar-canvas') shareRadarInstance = chart;
 
   return chart;
 }

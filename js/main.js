@@ -596,8 +596,10 @@ function renderResults(typeData, radarData) {
   document.getElementById('resultTypeTitle').style.color = typeData.color;
   document.getElementById('resultTypeEn').textContent = typeData.enName;
 
-  // Character
-  document.getElementById('characterDisplay').innerHTML = CHARACTER_SVGS[typeData.code];
+  // Character (JPG image)
+  const charImg = CHARACTER_IMAGES[typeData.code];
+  document.getElementById('characterDisplay').innerHTML =
+    `<img src="${charImg}" alt="${typeData.name}" width="180" height="180" loading="lazy" style="object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.1));">`;
   document.getElementById('characterName').textContent = typeData.name;
   document.getElementById('characterName').style.color = typeData.color;
 
@@ -627,32 +629,49 @@ function renderResults(typeData, radarData) {
   const traitsList = document.getElementById('resultTraits');
   traitsList.innerHTML = typeData.traits.map(t => `<li>${t}</li>`).join('');
 
-  // Suggestions
+  // Suggestions (random from pool)
+  const suggestions = getRandomSuggestions(typeData.code, 3);
   const sugList = document.getElementById('resultSuggestions');
-  sugList.innerHTML = typeData.suggestions.map(s => `<li>${s}</li>`).join('');
+  sugList.innerHTML = suggestions.map(s => `<li>${s}</li>`).join('');
 
   // Share card
   renderShareCard(typeData, radarData);
 }
 
 function renderShareCard(typeData, radarData) {
-  const card = document.getElementById('share-card');
-  if (!card) return;
+  const code = typeData.code;
 
-  card.style.borderTop = `6px solid ${typeData.color}`;
+  // Share card metadata
+  const SHARE_META = {
+    FULL_ESCORT:    { tag: '高参与 · 情感支持型' },
+    ACADEMIC_LEAD:  { tag: '高参与 · 学业主导型' },
+    WARM_COMPANION: { tag: '低参与 · 情感支持型' },
+    GROWTH_EXPLORER:{ tag: '探索成长中' },
+  };
 
-  document.getElementById('shareCharacter').innerHTML = CHARACTER_SVGS[typeData.code];
-  // Resize SVG for share card
-  const svg = document.getElementById('shareCharacter').querySelector('svg');
-  if (svg) { svg.style.width = '120px'; svg.style.height = 'auto'; }
+  const SHARE_DESC = {
+    FULL_ESCORT:    '您以充分的参与和温暖的情感支持，为孩子构建了安全而丰富的成长环境。研究表明，这种全面的家庭参与方式对孩子的学业、社交与情感发展都有显著正向影响。',
+    ACADEMIC_LEAD:  '您对孩子的教育倾注了大量时间和精力，认真负责、有结构。适当增加情感回应，孩子的心理韧性会更强。',
+    WARM_COMPANION: '您对孩子的内心世界高度敏感，为孩子创造了温暖而有安全感的家庭氛围。在情感联结稳固的基础上，加入更多结构性学习参与，孩子将全面成长。',
+    GROWTH_EXPLORER:'您和孩子都在各自的成长旅程中同行。愿意完成这份测评，本身就是自我觉察的开始——而觉察，正是所有改变中最重要的第一步。',
+  };
 
-  document.getElementById('shareTypeName').textContent = `我是「${typeData.name}」`;
-  document.getElementById('shareTypeSub').textContent = typeData.subtitle;
-  document.getElementById('shareDesc').textContent = typeData.oneLineDesc.replace(/你/g, '您');
+  const meta = SHARE_META[code];
 
-  // Render share radar
+  // Character image
+  document.getElementById('share-character-img').src = CHARACTER_IMAGES[code];
+  document.getElementById('share-type-name').textContent = typeData.name;
+  document.getElementById('share-type-tag').textContent = meta.tag;
+  document.getElementById('share-description').textContent = SHARE_DESC[code];
+
+  // Random 2 suggestions for share card
+  const shareSuggestions = getRandomSuggestions(code, 2);
+  document.getElementById('share-suggestions').innerHTML =
+    shareSuggestions.map(s => `<li style="margin-bottom:4px;">${s}</li>`).join('');
+
+  // Render share radar chart
   setTimeout(() => {
-    renderRadarChart('share-radar', radarData, typeData.color, false);
+    renderRadarChart('share-radar-canvas', radarData, '#c9a227', false);
   }, 200);
 }
 
@@ -669,7 +688,7 @@ async function downloadShareCard() {
     const canvas = await html2canvas(card, {
       scale: 2,
       useCORS: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: null,
       width: 375,
     });
 
