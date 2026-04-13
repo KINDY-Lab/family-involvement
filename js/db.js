@@ -12,6 +12,9 @@ function initDB() {
     if (typeof tcb !== 'undefined') {
       tcbApp = tcb.init({ env: TCB_ENV });
       tcbDb = tcbApp.database();
+      console.log('CloudBase initialized, env:', TCB_ENV);
+    } else {
+      console.warn('CloudBase SDK (tcb) not loaded');
     }
   } catch (e) {
     console.warn('CloudBase SDK not available:', e);
@@ -25,13 +28,18 @@ async function ensureLogin() {
       const auth = tcbApp.auth({ persistence: 'local' });
       const loginState = await auth.getLoginState();
       if (!loginState) {
+        console.log('Attempting anonymous login...');
         await auth.anonymousAuthProvider().signIn();
+        console.log('Anonymous login succeeded');
+      } else {
+        console.log('Already logged in');
       }
       isLoggedIn = true;
       return true;
     }
   } catch (e) {
-    console.warn('CloudBase login failed:', e);
+    console.error('CloudBase login failed:', e);
+    console.error('请检查：1) 腾讯云CloudBase控制台是否已开启"匿名登录"；2) 环境ID是否正确:', TCB_ENV);
   }
   return false;
 }
@@ -46,14 +54,26 @@ async function saveResponse(responseData) {
 
   // Try CloudBase first
   try {
-    const loggedIn = await ensureLogin();
-    if (loggedIn && tcbDb) {
-      await tcbDb.collection('questionnaire_responses').add(data);
-      console.log('数据保存成功 (CloudBase)');
-      return true;
+    if (!tcbDb) {
+      console.warn('CloudBase DB not initialized — skipping cloud save');
+    } else {
+      const loggedIn = await ensureLogin();
+      if (loggedIn) {
+        const result = await tcbDb.collection('questionnaire_responses').add(data);
+        console.log('数据保存成功 (CloudBase):', result);
+        return true;
+      } else {
+        console.warn('CloudBase login failed — falling back to localStorage');
+      }
     }
   } catch (err) {
     console.error('CloudBase 保存失败:', err);
+    if (err.message && err.message.includes('collection not exists')) {
+      console.error('请确认数据库集合 "questionnaire_responses" 已创建');
+    }
+    if (err.message && err.message.includes('permission')) {
+      console.error('请确认数据库集合权限已设置为"所有用户可读写"或开启匿名登录权限');
+    }
   }
 
   // Fallback: localStorage

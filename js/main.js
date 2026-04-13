@@ -268,9 +268,10 @@ function selectDemoOption(qid, value, el, type) {
 }
 
 function toggleDemoCheckbox(qid, value, el) {
-  el.classList.toggle('selected');
+  const isSelected = el.classList.toggle('selected');
+  // Sync the hidden checkbox with the visual state
   const input = el.querySelector('input[type="checkbox"]');
-  input.checked = !input.checked;
+  input.checked = isSelected;
 
   // Collect all checked values
   const checked = [];
@@ -284,6 +285,7 @@ function toggleDemoCheckbox(qid, value, el) {
     }
   });
   answers[qid] = checked;
+  saveProgress();
 }
 
 function restoreDemoAnswers() {
@@ -562,9 +564,13 @@ async function submitQuestionnaire() {
     tc_group_scores: tcScores.groupScores
   };
 
-  // Save to database
+  // Save to database (await to catch errors)
   const responseData = buildResponseData(answers, fiqScores, ccnesScores, tcScores, parentType);
-  saveResponse(responseData);
+  try {
+    await saveResponse(responseData);
+  } catch (e) {
+    console.error('数据保存异常:', e);
+  }
 
   // Simulate brief loading
   await new Promise(r => setTimeout(r, 1200));
