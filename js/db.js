@@ -11,7 +11,8 @@ function initDB() {
   try {
     if (typeof tcb !== 'undefined') {
       tcbApp = tcb.init({ env: TCB_ENV });
-      tcbDb = tcbApp.database();
+      // NOTE: do NOT call tcbApp.database() here — TCB SDK 1.10.0
+      // requires auth first.  database() is called after login in ensureLogin().
       console.log('CloudBase initialized, env:', TCB_ENV);
     } else {
       console.warn('CloudBase SDK (tcb) not loaded');
@@ -22,7 +23,7 @@ function initDB() {
 }
 
 async function ensureLogin() {
-  if (isLoggedIn) return true;
+  if (isLoggedIn && tcbDb) return true;
   try {
     if (tcbApp) {
       const auth = tcbApp.auth({ persistence: 'local' });
@@ -34,6 +35,8 @@ async function ensureLogin() {
       } else {
         console.log('Already logged in');
       }
+      // Get database reference AFTER successful auth
+      tcbDb = tcbApp.database();
       isLoggedIn = true;
       return true;
     }
