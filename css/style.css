@@ -951,6 +951,16 @@ body {
     width: 220px;
     height: 220px;
   }
+  /* ㉖ Mobile: shrink result logos to prevent overflow */
+  .result-logo {
+    height: 30px;
+  }
+  .result-logo-kindylab {
+    height: 38px;
+  }
+  .result-logos {
+    gap: 10px;
+  }
   #share-card {
     width: 100%;
     max-width: 375px;

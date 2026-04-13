@@ -693,41 +693,60 @@ async function downloadShareCard() {
     });
 
     const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+    const imgDataUrl = canvas.toDataURL('image/png');
 
     if (isWeChat) {
-      // WeChat: show image in overlay for long-press save
-      const imgDataUrl = canvas.toDataURL('image/png');
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
-
-      const tip = document.createElement('p');
-      tip.textContent = '长按图片保存到相册';
-      tip.style.cssText = 'color:#fff;font-size:15px;margin-bottom:16px;font-weight:500;';
-
-      const img = document.createElement('img');
-      img.src = imgDataUrl;
-      img.style.cssText = 'max-width:100%;max-height:75vh;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);';
-
-      const closeBtn = document.createElement('button');
-      closeBtn.textContent = '关闭';
-      closeBtn.style.cssText = 'margin-top:20px;padding:10px 32px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:24px;font-size:14px;cursor:pointer;font-family:inherit;';
-      closeBtn.onclick = () => overlay.remove();
-
-      overlay.appendChild(tip);
-      overlay.appendChild(img);
-      overlay.appendChild(closeBtn);
-      document.body.appendChild(overlay);
+      // WeChat: cannot download directly, show overlay for long-press save
+      showImageOverlay(imgDataUrl);
     } else {
-      // Standard browser: download
+      // Try standard download first
       const link = document.createElement('a');
       link.download = '我的家长类型_港中大深圳.png';
-      link.href = canvas.toDataURL('image/png');
+      link.href = imgDataUrl;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+
+      // If download likely failed (mobile browsers often block), show overlay too
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        setTimeout(() => {
+          showImageOverlay(imgDataUrl);
+        }, 500);
+      }
     }
   } catch (e) {
     console.error('截图失败:', e);
     alert('生成分享图失败，请稍后重试');
   }
+}
+
+function showImageOverlay(imgDataUrl) {
+  // Remove existing overlay if any
+  const existing = document.getElementById('save-image-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'save-image-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+
+  const tip = document.createElement('p');
+  tip.textContent = '长按图片保存到相册';
+  tip.style.cssText = 'color:#fff;font-size:16px;margin-bottom:16px;font-weight:600;text-align:center;';
+
+  const img = document.createElement('img');
+  img.src = imgDataUrl;
+  img.style.cssText = 'max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.3);touch-action:auto;-webkit-touch-callout:default;';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = '关闭';
+  closeBtn.style.cssText = 'margin-top:20px;padding:12px 36px;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:24px;font-size:15px;cursor:pointer;font-family:inherit;';
+  closeBtn.onclick = () => overlay.remove();
+
+  overlay.appendChild(tip);
+  overlay.appendChild(img);
+  overlay.appendChild(closeBtn);
+  document.body.appendChild(overlay);
 }
 
 // ── localStorage Persistence ──

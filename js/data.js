@@ -38,7 +38,7 @@ const QUESTIONNAIRE_DATA = {
     },
     {
       id: 'demo_caregiver',
-      text: '孩子目前的最主要照顾者是（如照顾时间相当，请选择最主要的负责人）：',
+      text: '孩子目前的最主要照顾者是（可多选）：',
       type: 'checkbox',
       options: ['母亲', '父亲', '爷爷奶奶', '外公外婆', '保姆', '其他__________'],
       hasOther: true,
