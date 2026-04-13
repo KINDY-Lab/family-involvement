@@ -57,16 +57,16 @@ async function saveResponse(responseData) {
 
   // Try CloudBase first
   try {
-    if (!tcbDb) {
-      console.warn('CloudBase DB not initialized — skipping cloud save');
+    if (!tcbApp) {
+      console.warn('CloudBase SDK not loaded — skipping cloud save');
     } else {
       const loggedIn = await ensureLogin();
-      if (loggedIn) {
+      if (loggedIn && tcbDb) {
         const result = await tcbDb.collection('questionnaire_responses').add(data);
         console.log('数据保存成功 (CloudBase):', result);
         return true;
       } else {
-        console.warn('CloudBase login failed — falling back to localStorage');
+        console.warn('CloudBase login/DB init failed — falling back to localStorage');
       }
     }
   } catch (err) {
