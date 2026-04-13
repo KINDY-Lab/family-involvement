@@ -18,7 +18,7 @@ No build step — static HTML/CSS/JS served directly.
 
 ## Architecture
 
-**Stack:** Vanilla JS + CSS Variables + CDN libraries (Chart.js 4.4.0, html2canvas 1.4.1, Tencent CloudBase SDK 1.12.1)
+**Stack:** Vanilla JS + CSS Variables + CDN libraries (Chart.js 4.4.0, html2canvas 1.4.1, Tencent CloudBase SDK 1.10.0)
 
 **Critical JS loading order** (in `index.html`):
 ```
