@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// db.js — Tencent CloudBase integration
+// db.js — Tencent CloudBase integration (new SDK @cloudbase/js-sdk)
 // ═══════════════════════════════════════════════════════════════
 
 const TCB_ENV = 'kindylab-1gf3c18x96831580';
@@ -9,41 +9,55 @@ let isLoggedIn = false;
 
 function initDB() {
   try {
-    if (typeof tcb !== 'undefined') {
-      tcbApp = tcb.init({ env: TCB_ENV });
-      // NOTE: do NOT call tcbApp.database() here — TCB SDK 1.10.0
-      // requires auth first.  database() is called after login in ensureLogin().
-      console.log('CloudBase initialized, env:', TCB_ENV);
+    if (typeof cloudbase !== 'undefined') {
+      tcbApp = cloudbase.init({ env: TCB_ENV });
+      console.log('[DB] CloudBase initialized ✓, env:', TCB_ENV);
     } else {
-      console.warn('CloudBase SDK (tcb) not loaded');
+      console.error('[DB] ❌ CloudBase SDK not loaded! cloudbase is undefined.');
     }
   } catch (e) {
-    console.warn('CloudBase SDK not available:', e);
+    console.error('[DB] ❌ CloudBase init failed:', e.message || e);
   }
 }
 
 async function ensureLogin() {
   if (isLoggedIn && tcbDb) return true;
-  try {
-    if (tcbApp) {
-      const auth = tcbApp.auth({ persistence: 'local' });
-      const loginState = await auth.getLoginState();
-      if (!loginState) {
-        console.log('Attempting anonymous login...');
-        await auth.anonymousAuthProvider().signIn();
-        console.log('Anonymous login succeeded');
-      } else {
-        console.log('Already logged in');
-      }
-      // Get database reference AFTER successful auth
-      tcbDb = tcbApp.database();
-      isLoggedIn = true;
-      return true;
-    }
-  } catch (e) {
-    console.error('CloudBase login failed:', e);
-    console.error('请检查：1) 腾讯云CloudBase控制台是否已开启"匿名登录"；2) 环境ID是否正确:', TCB_ENV);
+
+  if (!tcbApp) {
+    console.error('[DB] ensureLogin: tcbApp is null — cannot proceed');
+    return false;
   }
+
+  try {
+    console.log('[DB] Auth: calling app.auth().signInAnonymously()...');
+    const auth = tcbApp.auth();
+    const result = await auth.signInAnonymously();
+
+    // New SDK may return { data, error } or throw
+    if (result && result.error) {
+      console.error('[DB] ❌ signInAnonymously returned error:', result.error);
+      return false;
+    }
+
+    console.log('[DB] Auth: anonymous login succeeded ✓');
+
+    // Get database reference AFTER successful auth
+    console.log('[DB] Calling tcbApp.database()...');
+    tcbDb = tcbApp.database();
+    isLoggedIn = true;
+    console.log('[DB] Database reference obtained ✓');
+    return true;
+
+  } catch (e) {
+    console.error('[DB] ❌ ensureLogin FAILED');
+    console.error('[DB]   message:', e.message || e);
+    console.error('[DB]   code:   ', e.code || '(none)');
+    console.error('[DB]   string: ', String(e));
+    console.error('[DB] → 请检查 CloudBase 控制台:');
+    console.error('    1) 身份认证 → 登录方式 → 匿名登录 → 是否开启');
+    console.error('    2) 环境配置 → 安全配置 → 安全域名 → 是否添加了当前域名');
+  }
+
   return false;
 }
 
@@ -55,27 +69,50 @@ async function saveResponse(responseData) {
     session_id: generateUUID()
   };
 
+  // Sanitize: CloudBase rejects undefined values
+  Object.keys(data).forEach(key => {
+    if (data[key] === undefined) data[key] = null;
+  });
+  if (data.teacher_child_raw && typeof data.teacher_child_raw === 'object') {
+    Object.keys(data.teacher_child_raw).forEach(key => {
+      if (data.teacher_child_raw[key] === undefined) data.teacher_child_raw[key] = null;
+    });
+  }
+
+  console.log('[DB] saveResponse called, fields:', Object.keys(data).length,
+    ', size:', JSON.stringify(data).length, 'bytes');
+
   // Try CloudBase first
   try {
     if (!tcbApp) {
-      console.warn('CloudBase SDK not loaded — skipping cloud save');
+      console.error('[DB] ❌ tcbApp is null — CloudBase SDK never initialized. Skipping cloud save.');
     } else {
+      console.log('[DB] Step 1: ensureLogin...');
       const loggedIn = await ensureLogin();
+      console.log('[DB] Step 1 result: loggedIn =', loggedIn, ', tcbDb =', !!tcbDb);
+
       if (loggedIn && tcbDb) {
+        console.log('[DB] Step 2: collection.add() — writing to questionnaire_responses...');
         const result = await tcbDb.collection('questionnaire_responses').add(data);
-        console.log('数据保存成功 (CloudBase):', result);
+        console.log('[DB] ✅ CloudBase save succeeded!', JSON.stringify(result));
         return true;
       } else {
-        console.warn('CloudBase login/DB init failed — falling back to localStorage');
+        console.warn('[DB] ⚠️ Login/DB failed — falling back to localStorage');
       }
     }
   } catch (err) {
-    console.error('CloudBase 保存失败:', err);
-    if (err.message && err.message.includes('collection not exists')) {
-      console.error('请确认数据库集合 "questionnaire_responses" 已创建');
-    }
-    if (err.message && err.message.includes('permission')) {
-      console.error('请确认数据库集合权限已设置为"所有用户可读写"或开启匿名登录权限');
+    console.error('[DB] ❌ CloudBase save FAILED');
+    console.error('[DB]   message:', err.message || err);
+    console.error('[DB]   code:   ', err.code || '(none)');
+    console.error('[DB]   string: ', String(err));
+
+    if (err.message) {
+      if (err.message.includes('not exist') || err.message.includes('not found')) {
+        console.error('[DB] → 请在 CloudBase 控制台创建集合 "questionnaire_responses"');
+      }
+      if (err.message.includes('permission') || err.message.includes('PermissionDenied') || err.message.includes('denied')) {
+        console.error('[DB] → 请设置集合权限为自定义规则: {"read":true,"write":true}');
+      }
     }
   }
 
@@ -83,10 +120,10 @@ async function saveResponse(responseData) {
   try {
     const key = 'backup_' + Date.now();
     localStorage.setItem(key, JSON.stringify(data));
-    console.log('数据已备份到 localStorage:', key);
+    console.log('[DB] ⚠️ Data backed up to localStorage:', key);
     return true;
   } catch (e) {
-    console.error('localStorage 备份也失败:', e);
+    console.error('[DB] ❌ localStorage backup also failed:', e);
   }
 
   return false;
@@ -168,3 +205,90 @@ function buildResponseData(answers, fiqScores, ccnesScores, tcScores, parentType
 
   return data;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// DEBUG: 在浏览器控制台输入 testCloudBase() 即可测试
+// 不需要填问卷，直接测试每一步
+// ═══════════════════════════════════════════════════════════════
+window.testCloudBase = async function() {
+  console.group('======= CloudBase 诊断测试 =======');
+
+  // Step 1: SDK check
+  console.log('[1/6] SDK:', typeof cloudbase !== 'undefined' ? '✅ 已加载 (@cloudbase/js-sdk)' : '❌ 未加载');
+  if (typeof cloudbase === 'undefined') {
+    console.error('→ cloudbase SDK 未加载！请检查 CDN URL');
+    console.groupEnd();
+    return;
+  }
+
+  // Step 2: Init
+  let app;
+  try {
+    console.log('[2/6] cloudbase.init({ env: "' + TCB_ENV + '" })...');
+    app = cloudbase.init({ env: TCB_ENV });
+    console.log('[2/6] ✅ init 成功');
+  } catch (e) {
+    console.error('[2/6] ❌ init 失败:', e.message || e);
+    console.groupEnd();
+    return;
+  }
+
+  // Step 3+4: Get auth instance and login (call auth() only ONCE per SDK requirement)
+  try {
+    console.log('[3/6] 获取 auth 实例...');
+    const auth = app.auth();
+    console.log('[3/6] ✅ auth() 成功');
+
+    console.log('[4/6] 尝试匿名登录...');
+    const result = await auth.signInAnonymously();
+    if (result && result.error) {
+      console.error('[4/6] ❌ signInAnonymously 返回错误:', result.error);
+      console.groupEnd();
+      return;
+    }
+    console.log('[4/6] ✅ 匿名登录成功');
+  } catch (e) {
+    console.error('[4/6] ❌ 登录失败:', e.message || e);
+    console.error('[4/6] → 请检查 CloudBase 控制台: 身份认证 → 匿名登录 是否开启');
+    console.groupEnd();
+    return;
+  }
+
+  // Step 5: Database
+  let db;
+  try {
+    console.log('[5/6] 获取 database 引用...');
+    db = app.database();
+    console.log('[5/6] ✅ database() 成功');
+  } catch (e) {
+    console.error('[5/6] ❌ database() 失败:', e.message || e);
+    console.groupEnd();
+    return;
+  }
+
+  // Step 6: Write test
+  try {
+    console.log('[6/6] 写入测试数据到 questionnaire_responses...');
+    const result = await db.collection('questionnaire_responses').add({
+      _test: true,
+      test_time: new Date().toISOString(),
+      message: 'CloudBase connection test'
+    });
+    console.log('[6/6] ✅ 写入成功!', JSON.stringify(result));
+    console.log('');
+    console.log('🎉 全部通过！请到 CloudBase 控制台 → 数据库 → questionnaire_responses 确认有 _test=true 的记录');
+  } catch (e) {
+    console.error('[6/6] ❌ 写入失败:', e.message || e);
+    console.error('[6/6]   code:', e.code || '(none)');
+    if (e.message) {
+      if (e.message.includes('not exist') || e.message.includes('not found')) {
+        console.error('→ 请在 CloudBase 控制台创建集合 "questionnaire_responses"');
+      }
+      if (e.message.includes('permission') || e.message.includes('PermissionDenied')) {
+        console.error('→ 请设置集合权限为自定义规则: {"read": true, "write": true}');
+      }
+    }
+  }
+
+  console.groupEnd();
+};
