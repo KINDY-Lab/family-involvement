@@ -145,7 +145,7 @@ function buildResponseData(answers, fiqScores, ccnesScores, tcScores, parentType
   const demoFields = [
     'demo_role', 'demo_child_gender', 'demo_num_children', 'demo_child_order',
     'demo_caregiver', 'demo_education', 'demo_birthdate', 'demo_job',
-    'demo_overtime', 'demo_social_ladder'
+    'demo_overtime', 'demo_social_ladder', 'demo_child_name', 'demo_kindergarten', 'demo_class'
   ];
   demoFields.forEach(f => {
     data[f] = answers[f] !== undefined ? answers[f] : null;

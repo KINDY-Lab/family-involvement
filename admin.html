@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>问卷管理后台 — KINDY Lab</title>
+  <link rel="icon" href="assets/logo/Kindy_lab.webp" type="image/webp">
+  <style>
+    :root {
+      --primary: #4E2A84;
+      --primary-light: #7B5EA7;
+      --bg: #F5F3F8;
+      --card-bg: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --success: #10B981;
+      --danger: #EF4444;
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .admin-header {
+      background: var(--primary);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(78, 42, 132, 0.3);
+    }
+    .admin-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-header h1 span { font-size: 13px; font-weight: 400; opacity: 0.8; }
+    .admin-header img { height: 32px; border-radius: 4px; }
+    .btn-logout {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+    /* Login */
+    #loginView {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--primary) 0%, #7B5EA7 100%);
+    }
+    .login-card {
+      background: white;
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      width: 360px;
+      text-align: center;
+    }
+    .login-card img { height: 48px; margin-bottom: 16px; }
+    .login-card h2 { font-size: 20px; margin-bottom: 8px; color: var(--primary); }
+    .login-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .login-card input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-card input:focus { border-color: var(--primary); }
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+    .btn-login:hover { background: var(--primary-light); }
+    #loginError {
+      display: none;
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* Dashboard */
+    .admin-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Summary */
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 16px 24px;
+      background: white;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      flex-wrap: wrap;
+    }
+    .summary-stat {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .summary-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-right: 6px;
+    }
+    .btn-refresh {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: opacity 0.2s;
+    }
+    .btn-refresh:hover { opacity: 0.85; }
+
+    /* District */
+    .district-section {
+      margin-bottom: 24px;
+    }
+    .district-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--primary);
+    }
+    .district-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .district-total {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Kid grid */
+    .kid-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .kid-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 1px solid var(--border);
+    }
+    .kid-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(78, 42, 132, 0.12);
+      border-color: var(--primary-light);
+    }
+    .kid-name {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .kid-count {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Detail view */
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .detail-meta span { font-size: 14px; color: var(--text-muted); }
+    .btn-back {
+      padding: 8px 16px;
+      background: #F3F4F6;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text);
+      margin-right: 12px;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background: #E5E7EB; }
+    .btn-export {
+      padding: 8px 16px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: opacity 0.2s;
+    }
+    .btn-export:hover { opacity: 0.85; }
+
+    .tracking-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #F9FAFB;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tracking-link label {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .tracking-input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text);
+      background: white;
+      min-width: 0;
+    }
+    .btn-copy {
+      padding: 6px 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    /* Table */
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .detail-table th {
+      background: var(--primary);
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .detail-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .detail-table tr:hover td { background: #F9FAFB; }
+    .detail-table tr:last-child td { border-bottom: none; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .admin-main { padding: 16px; }
+      .kid-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .summary-bar { gap: 12px; }
+      .summary-num { font-size: 20px; }
+      .detail-table th, .detail-table td { padding: 8px 10px; font-size: 12px; }
+      .tracking-link { flex-direction: column; align-items: stretch; }
+    }
+
+    #loadStatus {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Login View -->
+  <div id="loginView" style="display:flex">
+    <div class="login-card">
+      <img src="assets/logo/Kindy_lab.webp" alt="KINDY Lab">
+      <h2>问卷管理后台</h2>
+      <p>CUHK-Shenzhen KINDY Lab</p>
+      <input type="password" id="adminPwd" placeholder="请输入管理密码" autocomplete="current-password">
+      <button class="btn-login" onclick="handleLogin()">登 录</button>
+      <div id="loginError">密码错误，请重试</div>
+    </div>
+  </div>
+
+  <!-- Dashboard View -->
+  <div id="dashboardView" style="display:none">
+    <div class="admin-header">
+      <h1>
+        <img src="assets/logo/Kindy_lab.webp" alt="Logo">
+        <span id="dashboardTitle">问卷管理后台</span>
+      </h1>
+      <button class="btn-logout" onclick="handleLogout()">退出登录</button>
+    </div>
+    <div class="admin-main">
+      <div id="loadStatus"></div>
+      <div id="dashboardContent"></div>
+    </div>
+  </div>
+
+  <!-- Detail View -->
+  <div id="detailView" style="display:none">
+    <div class="admin-header">
+      <h1>
+        <button class="btn-back" onclick="showDashboard()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px">&larr; 返回</button>
+        <span id="detailTitle"></span>
+      </h1>
+      <button class="btn-logout" onclick="handleLogout()">退出登录</button>
+    </div>
+    <div class="admin-main">
+      <div id="detailInfo"></div>
+      <table class="detail-table">
+        <thead>
+          <tr><th>#</th><th>孩子姓名</th><th>班级</th><th>提交时间</th></tr>
+        </thead>
+        <tbody id="detailTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@cloudbase/js-sdk@2.17.3/dist/cloudbase.full.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

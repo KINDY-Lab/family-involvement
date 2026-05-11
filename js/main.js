@@ -193,6 +193,7 @@ function renderStep1() {
   QUESTIONNAIRE_DATA.demographics.forEach(q => {
     const div = document.createElement('div');
     div.className = 'demo-group';
+    div.id = 'card_' + q.id;
 
     if (q.type === 'radio') {
       div.innerHTML = `
@@ -226,6 +227,19 @@ function renderStep1() {
       div.innerHTML = `
         <div class="demo-label">${q.text}<span class="required">*</span></div>
         <input type="text" class="demo-text-input" id="demo_${q.id}" placeholder="${q.placeholder || ''}" oninput="answers['${q.id}']=this.value">`;
+    } else if (q.type === 'kindergarten') {
+      const districts = Object.keys(KINDERGARTENS);
+      div.innerHTML = `
+        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="kindergarten-selects">
+          <select id="district_select" class="demo-select" onchange="populateKindergartenSelect(this.value)">
+            <option value="">请选择行政区</option>
+            ${districts.map(d => `<option value="${d}">${d}</option>`).join('')}
+          </select>
+          <select id="demo_${q.id}" class="demo-select" onchange="if(this.value){answers['${q.id}']=this.value}else{delete answers['${q.id}']};saveProgress()">
+            <option value="">请先选择行政区</option>
+          </select>
+        </div>`;
     } else if (q.type === 'slider') {
       div.innerHTML = `
         <div class="demo-label">${q.text}<span class="required">*</span></div>
@@ -300,6 +314,20 @@ function restoreDemoAnswers() {
         el.value = val;
         const valEl = document.getElementById('slider_val_' + key);
         if (valEl) valEl.textContent = val;
+      } else if (el.tagName === 'SELECT') {
+        if (key === 'demo_kindergarten' && val) {
+          // Restore kindergarten: populate then select
+          const spaceIdx = val.indexOf(' ');
+          if (spaceIdx > 0) {
+            const district = val.substring(0, spaceIdx);
+            const districtSelect = document.getElementById('district_select');
+            if (districtSelect) {
+              districtSelect.value = district;
+              populateKindergartenSelect(district);
+            }
+            el.value = val;
+          }
+        }
       }
       // For radio/checkbox groups, restore selected state
       if (Array.isArray(val)) {
@@ -314,6 +342,21 @@ function restoreDemoAnswers() {
       }
     }
   });
+}
+
+function populateKindergartenSelect(district) {
+  const schoolSelect = document.getElementById('demo_demo_kindergarten');
+  schoolSelect.innerHTML = '<option value="">请选择幼儿园</option>';
+  if (district && KINDERGARTENS[district]) {
+    KINDERGARTENS[district].forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = district + ' ' + school;
+      opt.textContent = school;
+      schoolSelect.appendChild(opt);
+    });
+  }
+  delete answers['demo_kindergarten'];
+  saveProgress();
 }
 
 // ── Render Step 2: FIQ ──
