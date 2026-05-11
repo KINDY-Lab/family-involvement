@@ -104,6 +104,8 @@ function validateStep1() {
         if (selected.length === 0) return [q.id];
       } else if (q.type === 'text') {
         if (!answers[q.id] || answers[q.id].trim() === '') return [q.id];
+      } else if (q.type === 'kindergarten') {
+        if (!answers[q.id] || (typeof answers[q.id] === 'string' && answers[q.id].trim() === '')) return [q.id];
       } else if (q.type === 'slider') {
         if (answers[q.id] === undefined) return [q.id];
       } else {
@@ -231,15 +233,16 @@ function renderStep1() {
       const districts = Object.keys(KINDERGARTENS);
       div.innerHTML = `
         <div class="demo-label">${q.text}<span class="required">*</span></div>
-        <div class="kindergarten-selects">
+        <div class="kindergarten-selects" id="kindergarten_selects_wrap">
           <select id="district_select" class="demo-select" onchange="populateKindergartenSelect(this.value)">
             <option value="">请选择行政区</option>
             ${districts.map(d => `<option value="${d}">${d}</option>`).join('')}
           </select>
-          <select id="demo_${q.id}" class="demo-select" onchange="if(this.value){answers['${q.id}']=this.value}else{delete answers['${q.id}']};saveProgress()">
+          <select id="demo_${q.id}" class="demo-select" onchange="handleKindergartenChange(this)">
             <option value="">请先选择行政区</option>
           </select>
-        </div>`;
+        </div>
+        <input type="text" class="demo-text-input" id="kindergarten_other_input" placeholder="请输入幼儿园全称" style="display:none;margin-top:8px;" oninput="answers['demo_kindergarten']=this.value;saveProgress()">`;
     } else if (q.type === 'slider') {
       div.innerHTML = `
         <div class="demo-label">${q.text}<span class="required">*</span></div>
@@ -316,16 +319,36 @@ function restoreDemoAnswers() {
         if (valEl) valEl.textContent = val;
       } else if (el.tagName === 'SELECT') {
         if (key === 'demo_kindergarten' && val) {
-          // Restore kindergarten: populate then select
-          const spaceIdx = val.indexOf(' ');
-          if (spaceIdx > 0) {
-            const district = val.substring(0, spaceIdx);
-            const districtSelect = document.getElementById('district_select');
-            if (districtSelect) {
-              districtSelect.value = district;
-              populateKindergartenSelect(district);
+          // Restore kindergarten: check if it's from known list or free text
+          const otherInput = document.getElementById('kindergarten_other_input');
+          const districtSelect = document.getElementById('district_select');
+          // Try to find matching district + school
+          let found = false;
+          for (const [district, schools] of Object.entries(KINDERGARTENS)) {
+            for (const school of schools) {
+              if (val === district + ' ' + school) {
+                districtSelect.value = district;
+                populateKindergartenSelect(district);
+                el.value = val;
+                found = true;
+                break;
+              }
             }
-            el.value = val;
+            if (found) break;
+          }
+          // If not found, treat as "other" free text
+          if (!found && otherInput) {
+            districtSelect.value = '';
+            populateKindergartenSelect('');
+            // Add other option back and select it
+            const otherOpt = document.createElement('option');
+            otherOpt.value = '__other__';
+            otherOpt.textContent = '其他';
+            el.appendChild(otherOpt);
+            el.value = '__other__';
+            otherInput.style.display = 'block';
+            otherInput.value = val;
+            document.getElementById('district_select').disabled = true;
           }
         }
       }
@@ -346,7 +369,13 @@ function restoreDemoAnswers() {
 
 function populateKindergartenSelect(district) {
   const schoolSelect = document.getElementById('demo_demo_kindergarten');
+  const otherInput = document.getElementById('kindergarten_other_input');
+  const districtSelect = document.getElementById('district_select');
   schoolSelect.innerHTML = '<option value="">请选择幼儿园</option>';
+  otherInput.style.display = 'none';
+  otherInput.value = '';
+  districtSelect.disabled = false;
+
   if (district && KINDERGARTENS[district]) {
     KINDERGARTENS[district].forEach(school => {
       const opt = document.createElement('option');
@@ -354,6 +383,12 @@ function populateKindergartenSelect(district) {
       opt.textContent = school;
       schoolSelect.appendChild(opt);
     });
+    // Add "其他" option
+    const otherOpt = document.createElement('option');
+    otherOpt.value = '__other__';
+    otherOpt.textContent = '其他';
+    schoolSelect.appendChild(otherOpt);
+
     // Auto-select when only one school in the district
     if (KINDERGARTENS[district].length === 1) {
       const val = district + ' ' + KINDERGARTENS[district][0];
@@ -365,6 +400,30 @@ function populateKindergartenSelect(district) {
   }
   delete answers['demo_kindergarten'];
   saveProgress();
+}
+
+function handleKindergartenChange(el) {
+  const otherInput = document.getElementById('kindergarten_other_input');
+  const districtSelect = document.getElementById('district_select');
+  if (el.value === '__other__') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+    districtSelect.disabled = true;
+    delete answers['demo_kindergarten'];
+    saveProgress();
+  } else if (el.value) {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+    districtSelect.disabled = false;
+    answers['demo_kindergarten'] = el.value;
+    saveProgress();
+  } else {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+    districtSelect.disabled = false;
+    delete answers['demo_kindergarten'];
+    saveProgress();
+  }
 }
 
 // ── Render Step 2: FIQ ──
@@ -528,7 +587,7 @@ function renderStep4() {
   const legend = document.createElement('div');
   legend.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;';
   ccnes.scaleLabels.forEach((label, i) => {
-    legend.innerHTML += `<span style="font-size:11px;color:#6B7280;background:#f3f4f6;padding:4px 8px;border-radius:4px;">${i+1} = ${label}</span>`;
+    legend.innerHTML += `<span class="scale-legend-label">${i+1} = ${label}</span>`;
   });
   container.appendChild(legend);
 
@@ -700,10 +759,10 @@ function renderShareCard(typeData, radarData) {
 
   // Share card metadata
   const SHARE_META = {
-    FULL_ESCORT:    { tag: '高参与 · 情感支持型' },
-    ACADEMIC_LEAD:  { tag: '高参与 · 学业主导型' },
-    WARM_COMPANION: { tag: '低参与 · 情感支持型' },
-    GROWTH_EXPLORER:{ tag: '探索成长中' },
+    FULL_ESCORT:    { tag: '全方位投入 · 情感支持型' },
+    ACADEMIC_LEAD:  { tag: '学业主导 · 结构规划型' },
+    WARM_COMPANION: { tag: '情感陪伴 · 温暖接纳型' },
+    GROWTH_EXPLORER:{ tag: '持续探索 · 自我觉察型' },
   };
 
   const SHARE_DESC = {

@@ -248,8 +248,9 @@ body {
   justify-content: center;
 }
 .rating-label {
-  font-size: 10px;
-  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
   white-space: nowrap;
 }
 /* ⑫ Step 2 按钮改为正圆形 */
@@ -344,6 +345,15 @@ body {
 }
 .demo-text-input::placeholder {
   color: #aaa;
+}
+/* Scale legend labels (Step 4 CCNES) */
+.scale-legend-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 /* Kindergarten cascading selects */
 .kindergarten-selects {
