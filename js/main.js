@@ -676,10 +676,20 @@ async function submitQuestionnaire() {
 
   // Save to database (await to catch errors)
   const responseData = buildResponseData(answers, fiqScores, ccnesScores, tcScores, parentType);
+  let saveResult = { success: false, method: 'none' };
   try {
-    await saveResponse(responseData);
+    saveResult = await saveResponse(responseData);
   } catch (e) {
     console.error('数据保存异常:', e);
+  }
+
+  // Show warning if cloud save failed
+  if (!saveResult || saveResult.method !== 'cloudbase') {
+    console.warn('[Main] Cloud save did not succeed, method:', saveResult?.method);
+    // Store flag for results page to display
+    window._dbSaveFailed = true;
+  } else {
+    window._dbSaveFailed = false;
   }
 
   // Simulate brief loading
@@ -706,6 +716,17 @@ function renderResults(typeData, radarData) {
   const results = document.getElementById('resultsSection');
   results.style.display = 'block';
   results.classList.add('active');
+
+  // Show save warning if cloud save failed
+  let existingBanner = document.getElementById('saveWarningBanner');
+  if (existingBanner) existingBanner.remove();
+  if (window._dbSaveFailed) {
+    const banner = document.createElement('div');
+    banner.id = 'saveWarningBanner';
+    banner.style.cssText = 'margin:12px 16px;padding:10px 14px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:13px;color:#92400E;line-height:1.5;';
+    banner.innerHTML = '⚠️ 数据未成功同步到云端，已备份到本地浏览器。请联系研究人员并告知此提示。';
+    results.insertBefore(banner, results.firstChild.nextSibling);
+  }
 
   // Header — use innerHTML for controlled line break
   document.getElementById('resultTypeTitle').innerHTML = `您是孩子成长路上的<br>「<span style="display:inline-block">${typeData.name}</span>」！`;

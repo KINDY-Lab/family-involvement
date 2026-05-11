@@ -85,7 +85,8 @@ async function saveResponse(responseData) {
   // Try CloudBase first
   try {
     if (!tcbApp) {
-      console.error('[DB] ❌ tcbApp is null — CloudBase SDK never initialized. Skipping cloud save.');
+      console.error('[DB] ❌ tcbApp is null — CloudBase SDK never initialized.');
+      console.error('[DB] → 检查 cloudbase SDK 是否加载:', typeof cloudbase);
     } else {
       console.log('[DB] Step 1: ensureLogin...');
       const loggedIn = await ensureLogin();
@@ -95,7 +96,7 @@ async function saveResponse(responseData) {
         console.log('[DB] Step 2: collection.add() — writing to questionnaire_responses...');
         const result = await tcbDb.collection('questionnaire_responses').add(data);
         console.log('[DB] ✅ CloudBase save succeeded!', JSON.stringify(result));
-        return true;
+        return { success: true, method: 'cloudbase' };
       } else {
         console.warn('[DB] ⚠️ Login/DB failed — falling back to localStorage');
       }
@@ -121,12 +122,12 @@ async function saveResponse(responseData) {
     const key = 'backup_' + Date.now();
     localStorage.setItem(key, JSON.stringify(data));
     console.log('[DB] ⚠️ Data backed up to localStorage:', key);
-    return true;
+    return { success: true, method: 'localStorage', key: key };
   } catch (e) {
     console.error('[DB] ❌ localStorage backup also failed:', e);
   }
 
-  return false;
+  return { success: false, method: 'none' };
 }
 
 function generateUUID() {
