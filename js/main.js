@@ -354,6 +354,14 @@ function populateKindergartenSelect(district) {
       opt.textContent = school;
       schoolSelect.appendChild(opt);
     });
+    // Auto-select when only one school in the district
+    if (KINDERGARTENS[district].length === 1) {
+      const val = district + ' ' + KINDERGARTENS[district][0];
+      schoolSelect.value = val;
+      answers['demo_kindergarten'] = val;
+      saveProgress();
+      return;
+    }
   }
   delete answers['demo_kindergarten'];
   saveProgress();

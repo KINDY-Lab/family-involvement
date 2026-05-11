@@ -18,6 +18,26 @@ const QUESTIONNAIRE_DATA = {
   // ── Module A: Demographics ──
   demographics: [
     {
+      id: 'demo_child_name',
+      text: '孩子姓名（请写大名，后期制作证书使用）：',
+      type: 'text',
+      placeholder: '请输入孩子大名',
+      required: true
+    },
+    {
+      id: 'demo_kindergarten',
+      text: '孩子就读幼儿园：',
+      type: 'kindergarten',
+      required: true
+    },
+    {
+      id: 'demo_class',
+      text: '孩子所在班级（如"中一班"）：',
+      type: 'text',
+      placeholder: '如中一班',
+      required: true
+    },
+    {
       id: 'demo_role',
       text: '您的身份是孩子的：',
       type: 'radio',
@@ -107,26 +127,6 @@ const QUESTIONNAIRE_DATA = {
       max: 10,
       minLabel: '社会地位最低',
       maxLabel: '社会地位最高',
-      required: true
-    },
-    {
-      id: 'demo_child_name',
-      text: '孩子姓名（请写大名，后期制作证书使用）：',
-      type: 'text',
-      placeholder: '请输入孩子大名',
-      required: true
-    },
-    {
-      id: 'demo_kindergarten',
-      text: '孩子就读幼儿园：',
-      type: 'kindergarten',
-      required: true
-    },
-    {
-      id: 'demo_class',
-      text: '孩子所在班级（如"中一班"）：',
-      type: 'text',
-      placeholder: '如中一班',
       required: true
     }
   ],
