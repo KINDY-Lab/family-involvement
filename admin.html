@@ -297,6 +297,45 @@
     }
     .detail-table tr:hover td { background: #F9FAFB; }
     .detail-table tr:last-child td { border-bottom: none; }
+    .detail-table tr.row-clickable { cursor: pointer; }
+    .detail-table tr.row-clickable:hover td { background: #EDE9F6; }
+
+    /* Record detail cards */
+    .record-card {
+      background: white;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .record-section-title {
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      background: var(--primary);
+    }
+    .record-pair {
+      display: flex;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      align-items: baseline;
+    }
+    .record-pair:last-child { border-bottom: none; }
+    .record-q {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .record-a {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      white-space: nowrap;
+      text-align: right;
+    }
 
     /* Responsive */
     @media (max-width: 640px) {
@@ -322,7 +361,12 @@
       .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -12px; padding: 0 12px; }
       .detail-table { min-width: 500px; }
       .detail-table th, .detail-table td { padding: 8px 10px; font-size: 12px; white-space: nowrap; }
-      #detailTitle { font-size: 13px; max-width: 45vw; overflow: hidden; text-overflow: ellipsis; }
+      #detailTitle, #recordTitle { font-size: 13px; max-width: 45vw; overflow: hidden; text-overflow: ellipsis; }
+      .record-pair { flex-direction: column; gap: 2px; }
+      .record-a { text-align: left; }
+      .record-section-title { font-size: 13px; padding: 8px 12px; }
+      .record-q { font-size: 12px; }
+      .record-a { font-size: 12px; }
     }
 
     #loadStatus {
@@ -384,6 +428,18 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- Record View -->
+  <div id="recordView" style="display:none">
+    <div class="admin-header">
+      <h1>
+        <button onclick="backToDetail()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px">&larr; 返回</button>
+        <span id="recordTitle">问卷详情</span>
+      </h1>
+      <button class="btn-logout" onclick="handleLogout()">退出登录</button>
+    </div>
+    <div class="admin-main" id="recordContent"></div>
   </div>
 
   <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.17.3/cloudbase.full.js"></script>

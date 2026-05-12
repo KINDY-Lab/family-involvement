@@ -9,6 +9,8 @@ let adminApp = null;
 let adminDb = null;
 let adminLoggedIn = false;
 let allRecords = [];
+let currentDetailRecords = [];
+let currentKindergarten = '';
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -114,6 +116,7 @@ async function fetchAllRecords() {
 async function showDashboard() {
   document.getElementById('loginView').style.display = 'none';
   document.getElementById('detailView').style.display = 'none';
+  document.getElementById('recordView') && (document.getElementById('recordView').style.display = 'none');
   document.getElementById('dashboardView').style.display = 'block';
   document.getElementById('dashboardTitle').textContent = '问卷管理后台';
   history.pushState(null, '', '#dashboard');
@@ -194,14 +197,17 @@ async function refreshData() {
 function showDetail(kindergarten) {
   document.getElementById('loginView').style.display = 'none';
   document.getElementById('dashboardView').style.display = 'none';
+  document.getElementById('recordView') && (document.getElementById('recordView').style.display = 'none');
   document.getElementById('detailView').style.display = 'block';
-  document.getElementById('dashboardTitle').textContent = kindergarten;
+  document.getElementById('detailTitle').textContent = kindergarten;
+  currentKindergarten = kindergarten;
 
   history.pushState(null, '', '#detail=' + encodeURIComponent(kindergarten));
 
   const records = allRecords
     .filter(r => r.demo_kindergarten === kindergarten)
     .sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
+  currentDetailRecords = records;
 
   // Info bar
   const info = document.getElementById('detailInfo');
@@ -228,7 +234,7 @@ function showDetail(kindergarten) {
     const name = r.demo_child_name || '-';
     const cls = r.demo_class || '-';
     const time = r.submitted_at ? new Date(r.submitted_at).toLocaleString('zh-CN') : '-';
-    return `<tr>
+    return `<tr class="row-clickable" onclick="showRecord(${i})">
       <td>${i + 1}</td>
       <td>${escapeHtml(name)}</td>
       <td>${escapeHtml(cls)}</td>
@@ -322,6 +328,105 @@ function exportCSV(kindergarten) {
   URL.revokeObjectURL(url);
 }
 
+// ── Record Detail View ──
+function showRecord(index) {
+  const r = currentDetailRecords[index];
+  if (!r) return;
+
+  document.getElementById('detailView').style.display = 'none';
+  document.getElementById('recordView').style.display = 'block';
+  document.getElementById('recordTitle').textContent = (r.demo_child_name || '未知') + ' 的问卷';
+
+  document.getElementById('recordContent').innerHTML = buildRecordHTML(r);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  history.pushState(null, '', '#record=' + index);
+}
+
+function backToDetail() {
+  document.getElementById('recordView').style.display = 'none';
+  showDetail(currentKindergarten);
+}
+
+function buildRecordHTML(r) {
+  let html = '';
+
+  // Basic info
+  html += recordCard('基本信息', [
+    ['孩子姓名', r.demo_child_name],
+    ['幼儿园', r.demo_kindergarten],
+    ['班级', r.demo_class],
+    ['提交时间', r.submitted_at ? new Date(r.submitted_at).toLocaleString('zh-CN') : ''],
+    ['家长类型', r.parent_type || '-'],
+  ]);
+
+  // Scoring summary
+  html += recordCard('评分结果', [
+    ['FIQ 居家均分', r.fiq_home_mean],
+    ['FIQ 学校均分', r.fiq_school_mean],
+    ['FIQ 沟通均分', r.fiq_comm_mean],
+    ['FIQ 总分均分', r.fiq_total_mean],
+    ['师幼关系均分', r.teacher_child_mean],
+    ['EE 情感表达', r.ccnes_EE],
+    ['EF 情感抚慰', r.ccnes_EF],
+    ['PF 问题解决', r.ccnes_PF],
+    ['MIN 轻视惩罚', r.ccnes_MIN],
+    ['DIS 痛苦表达', r.ccnes_DIS],
+    ['PUN 惩罚', r.ccnes_PUN],
+    ['支持性得分', r.ccnes_supportive],
+    ['压制性得分', r.ccnes_suppressive],
+    ['情感差异分', r.ccnes_emotion_diff],
+  ]);
+
+  // Demographics (skip name/kindergarten/class already shown)
+  const demoPairs = [];
+  QUESTIONNAIRE_DATA.demographics.forEach(q => {
+    if (['demo_child_name', 'demo_kindergarten', 'demo_class'].includes(q.id)) return;
+    demoPairs.push([q.text, r[q.id] || '-']);
+  });
+  html += recordCard('背景信息', demoPairs);
+
+  // FIQ
+  const fiqLabels = QUESTIONNAIRE_DATA.fiq.scaleLabels;
+  QUESTIONNAIRE_DATA.fiq.sections.forEach(sec => {
+    const pairs = sec.questions.map(q => {
+      const v = r[q.id];
+      return [q.text, v ? v + ' · ' + fiqLabels[v - 1] : '-'];
+    });
+    html += recordCard('家庭参与 — ' + sec.title, pairs);
+  });
+
+  // Teacher-child
+  QUESTIONNAIRE_DATA.teacherChild.groups.forEach(g => {
+    const pairs = g.items.map(item => {
+      const v = r.teacher_child_raw ? r.teacher_child_raw[item.id] : undefined;
+      return [item.text, v ? v + ' · ' + g.scale[v - 1] : '-'];
+    });
+    html += recordCard(g.title, pairs);
+  });
+
+  // CCNES
+  const ccnesLabels = QUESTIONNAIRE_DATA.ccnes.scaleLabels;
+  QUESTIONNAIRE_DATA.ccnes.scenarios.forEach((sc, idx) => {
+    const pairs = [['情境描述', sc.description]];
+    sc.responses.forEach(resp => {
+      const v = r['ccnes_' + resp.id];
+      pairs.push([resp.text, v ? v + ' · ' + ccnesLabels[v - 1] : '-']);
+    });
+    html += recordCard('情境 ' + (idx + 1), pairs);
+  });
+
+  return html;
+}
+
+function recordCard(title, pairs) {
+  let html = '<div class="record-card"><div class="record-section-title">' + escapeHtml(title) + '</div>';
+  pairs.forEach(([q, a]) => {
+    html += '<div class="record-pair"><div class="record-q">' + escapeHtml(String(q)) + '</div>'
+      + '<div class="record-a">' + escapeHtml(String(a != null ? a : '-')) + '</div></div>';
+  });
+  return html + '</div>';
+}
+
 // ── URL Params ──
 function checkUrlParams() {
   const params = new URLSearchParams(location.search);
@@ -343,7 +448,10 @@ function copyTrackingLink(url) {
 
 // Handle back button
 window.addEventListener('popstate', () => {
-  if (location.hash.startsWith('#detail=')) {
+  if (location.hash.startsWith('#record=')) {
+    const idx = parseInt(location.hash.replace('#record=', ''));
+    if (adminLoggedIn && currentDetailRecords[idx]) showRecord(idx);
+  } else if (location.hash.startsWith('#detail=')) {
     const kid = decodeURIComponent(location.hash.replace('#detail=', ''));
     if (adminLoggedIn) showDetail(kid);
   } else if (adminLoggedIn) {
