@@ -244,6 +244,57 @@ function escapeHtml(str) {
 }
 
 // ── CSV Export ──
+const CSV_COLUMNS = [
+  // Basic
+  { h: '序号', f: (_, i) => i + 1 },
+  { h: '提交时间', f: r => r.submitted_at || '' },
+  // Demographics
+  { h: '孩子姓名', f: r => r.demo_child_name || '' },
+  { h: '幼儿园', f: r => r.demo_kindergarten || '' },
+  { h: '班级', f: r => r.demo_class || '' },
+  { h: '身份', f: r => r.demo_role || '' },
+  { h: '孩子性别', f: r => r.demo_child_gender || '' },
+  { h: '孩子数量', f: r => r.demo_num_children || '' },
+  { h: '孩子排行', f: r => r.demo_child_order || '' },
+  { h: '主要照顾者', f: r => r.demo_caregiver || '' },
+  { h: '最高学历', f: r => r.demo_education || '' },
+  { h: '出生年月', f: r => r.demo_birthdate || '' },
+  { h: '工作类别', f: r => r.demo_job || '' },
+  { h: '加班频率', f: r => r.demo_overtime || '' },
+  { h: '社会阶梯', f: r => r.demo_social_ladder || '' },
+  // FIQ computed
+  { h: 'FIQ居家均分', f: r => r.fiq_home_mean || '' },
+  { h: 'FIQ学校均分', f: r => r.fiq_school_mean || '' },
+  { h: 'FIQ沟通均分', f: r => r.fiq_comm_mean || '' },
+  { h: 'FIQ总分均分', f: r => r.fiq_total_mean || '' },
+  // Teacher-child
+  { h: '师幼关系均分', f: r => r.teacher_child_mean || '' },
+  // CCNES computed
+  { h: 'EE_情感表达', f: r => r.ccnes_EE || '' },
+  { h: 'EF_情感抚慰', f: r => r.ccnes_EF || '' },
+  { h: 'PF_问题解决', f: r => r.ccnes_PF || '' },
+  { h: 'MIN_轻视惩罚', f: r => r.ccnes_MIN || '' },
+  { h: 'DIS_痛苦表达', f: r => r.ccnes_DIS || '' },
+  { h: 'PUN_惩罚', f: r => r.ccnes_PUN || '' },
+  { h: '支持性得分', f: r => r.ccnes_supportive || '' },
+  { h: '压制性得分', f: r => r.ccnes_suppressive || '' },
+  { h: '情感差异分', f: r => r.ccnes_emotion_diff || '' },
+  // Type & radar
+  { h: '家长类型', f: r => r.parent_type || '' },
+  { h: '雷达_居家', f: r => r.radar_home || '' },
+  { h: '雷达_学校', f: r => r.radar_school || '' },
+  { h: '雷达_沟通', f: r => r.radar_comm || '' },
+  { h: '雷达_情感', f: r => r.radar_emotion_support || '' },
+  { h: '雷达_问题解决', f: r => r.radar_problem_solving || '' },
+  { h: '雷达_师幼', f: r => r.radar_teacher_child || '' },
+];
+
+function csvVal(v) {
+  if (v === null || v === undefined) return '';
+  const s = String(v);
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+
 function exportCSV(kindergarten) {
   const records = allRecords
     .filter(r => r.demo_kindergarten === kindergarten)
@@ -255,9 +306,9 @@ function exportCSV(kindergarten) {
   }
 
   const BOM = '﻿';
-  const header = '序号,孩子姓名,班级,提交时间\n';
+  const header = CSV_COLUMNS.map(c => c.h).join(',') + '\n';
   const rows = records.map((r, i) =>
-    `${i + 1},"${(r.demo_child_name || '').replace(/"/g, '""')}","${(r.demo_class || '').replace(/"/g, '""')}","${r.submitted_at || ''}"`
+    CSV_COLUMNS.map(c => csvVal(c.f(r, i))).join(',')
   ).join('\n');
 
   const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });

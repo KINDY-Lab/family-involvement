@@ -300,12 +300,29 @@
 
     /* Responsive */
     @media (max-width: 640px) {
-      .admin-main { padding: 16px; }
-      .kid-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-      .summary-bar { gap: 12px; }
-      .summary-num { font-size: 20px; }
-      .detail-table th, .detail-table td { padding: 8px 10px; font-size: 12px; }
+      .admin-main { padding: 12px; }
+      .admin-header { padding: 10px 12px; }
+      .admin-header h1 { font-size: 15px; gap: 6px; }
+      .admin-header img { height: 24px; }
+      .admin-header h1 span { font-size: 12px; }
+      .btn-logout { padding: 5px 10px; font-size: 12px; }
+      .login-card { width: 90%; max-width: 360px; padding: 28px 20px; }
+      .summary-bar { gap: 8px; padding: 12px; }
+      .summary-num { font-size: 18px; }
+      .summary-stat { font-size: 12px; }
+      .btn-refresh { padding: 6px 12px; font-size: 12px; }
+      .kid-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+      .kid-card { padding: 12px; }
+      .kid-name { font-size: 13px; }
+      .kid-count { font-size: 16px; }
+      .district-name { font-size: 14px; }
+      .detail-meta { flex-direction: column; align-items: stretch; }
+      .btn-back, .btn-export, .btn-copy { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
       .tracking-link { flex-direction: column; align-items: stretch; }
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -12px; padding: 0 12px; }
+      .detail-table { min-width: 500px; }
+      .detail-table th, .detail-table td { padding: 8px 10px; font-size: 12px; white-space: nowrap; }
+      #detailTitle { font-size: 13px; max-width: 45vw; overflow: hidden; text-overflow: ellipsis; }
     }
 
     #loadStatus {
@@ -358,12 +375,14 @@
     </div>
     <div class="admin-main">
       <div id="detailInfo"></div>
-      <table class="detail-table">
-        <thead>
-          <tr><th>#</th><th>孩子姓名</th><th>班级</th><th>提交时间</th></tr>
-        </thead>
-        <tbody id="detailTableBody"></tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="detail-table">
+          <thead>
+            <tr><th>#</th><th>孩子姓名</th><th>班级</th><th>提交时间</th></tr>
+          </thead>
+          <tbody id="detailTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
