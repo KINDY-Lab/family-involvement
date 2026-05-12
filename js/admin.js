@@ -234,11 +234,12 @@ function showDetail(kindergarten) {
     const name = r.demo_child_name || '-';
     const cls = r.demo_class || '-';
     const time = r.submitted_at ? new Date(r.submitted_at).toLocaleString('zh-CN') : '-';
-    return `<tr class="row-clickable" onclick="showRecord(${i})">
+    return `<tr>
       <td>${i + 1}</td>
       <td>${escapeHtml(name)}</td>
       <td>${escapeHtml(cls)}</td>
       <td>${time}</td>
+      <td><button class="btn-view" onclick="showRecord(${i})">查看详情</button></td>
     </tr>`;
   }).join('');
 }

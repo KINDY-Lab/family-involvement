@@ -299,6 +299,18 @@
     .detail-table tr:last-child td { border-bottom: none; }
     .detail-table tr.row-clickable { cursor: pointer; }
     .detail-table tr.row-clickable:hover td { background: #EDE9F6; }
+    .btn-view {
+      padding: 6px 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+      min-height: 36px;
+    }
+    .btn-view:hover { opacity: 0.85; }
 
     /* Record detail cards */
     .record-card {
@@ -422,7 +434,7 @@
       <div class="table-wrap">
         <table class="detail-table">
           <thead>
-            <tr><th>#</th><th>孩子姓名</th><th>班级</th><th>提交时间</th></tr>
+            <tr><th>#</th><th>孩子姓名</th><th>班级</th><th>提交时间</th><th></th></tr>
           </thead>
           <tbody id="detailTableBody"></tbody>
         </table>
