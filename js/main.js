@@ -197,9 +197,11 @@ function renderStep1() {
     div.className = 'demo-group';
     div.id = 'card_' + q.id;
 
+    const reqMark = q.optional ? '<span class="optional-badge">选填</span>' : '<span class="required">*</span>';
+
     if (q.type === 'radio') {
       div.innerHTML = `
-        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="demo-label">${q.text}${reqMark}</div>
         <div class="demo-options" id="demo_${q.id}">
           ${q.options.map((opt, i) => {
             const isOther = opt.includes('__________');
@@ -213,7 +215,7 @@ function renderStep1() {
         </div>`;
     } else if (q.type === 'checkbox') {
       div.innerHTML = `
-        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="demo-label">${q.text}${reqMark}</div>
         <div class="demo-options" id="demo_${q.id}">
           ${q.options.map((opt, i) => {
             const isOther = opt.includes('__________');
@@ -227,12 +229,12 @@ function renderStep1() {
         </div>`;
     } else if (q.type === 'text') {
       div.innerHTML = `
-        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="demo-label">${q.text}${reqMark}</div>
         <input type="text" class="demo-text-input" id="demo_${q.id}" placeholder="${q.placeholder || ''}" oninput="answers['${q.id}']=this.value">`;
     } else if (q.type === 'kindergarten') {
       const districts = Object.keys(KINDERGARTENS);
       div.innerHTML = `
-        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="demo-label">${q.text}${reqMark}</div>
         <div class="kindergarten-selects" id="kindergarten_selects_wrap">
           <select id="district_select" class="demo-select" onchange="populateKindergartenSelect(this.value)">
             <option value="">请选择行政区</option>
@@ -245,7 +247,7 @@ function renderStep1() {
         <input type="text" class="demo-text-input" id="kindergarten_other_input" placeholder="请输入幼儿园全称" style="display:none;margin-top:8px;" oninput="answers['demo_kindergarten']=this.value;saveProgress()">`;
     } else if (q.type === 'slider') {
       div.innerHTML = `
-        <div class="demo-label">${q.text}<span class="required">*</span></div>
+        <div class="demo-label">${q.text}${reqMark}</div>
         <div class="slider-container">
           <div class="slider-value" id="slider_val_${q.id}">5</div>
           <input type="range" class="slider-input" min="${q.min}" max="${q.max}" value="5" id="demo_${q.id}"
@@ -255,7 +257,9 @@ function renderStep1() {
             <span>${q.maxLabel}</span>
           </div>
         </div>`;
-      answers[q.id] = 5; // default
+      if (!q.optional) {
+        answers[q.id] = 5; // default for required sliders only
+      }
     }
 
     container.appendChild(div);

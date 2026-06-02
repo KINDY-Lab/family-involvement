@@ -103,7 +103,8 @@ const QUESTIONNAIRE_DATA = {
         '其他__________'
       ],
       hasOther: true,
-      required: true
+      required: false,
+      optional: true
     },
     {
       id: 'demo_overtime',
@@ -117,7 +118,8 @@ const QUESTIONNAIRE_DATA = {
         '工作时间极不固定（如倒班制、需要随时待命）',
         '不适用（如全职父母）'
       ],
-      required: true
+      required: false,
+      optional: true
     },
     {
       id: 'demo_social_ladder',
@@ -127,7 +129,8 @@ const QUESTIONNAIRE_DATA = {
       max: 10,
       minLabel: '社会地位最低',
       maxLabel: '社会地位最高',
-      required: true
+      required: false,
+      optional: true
     }
   ],
 
