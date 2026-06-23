@@ -273,6 +273,52 @@
       white-space: nowrap;
     }
 
+    /* Search */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      min-width: 0;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .btn-search {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-search:hover { background: var(--primary-light); }
+    .btn-clear-search {
+      padding: 10px 16px;
+      background: #F3F4F6;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-clear-search:hover { background: #E5E7EB; }
+
     /* Table */
     .detail-table {
       width: 100%;
@@ -416,6 +462,25 @@
     </div>
     <div class="admin-main">
       <div id="loadStatus"></div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="按孩子姓名搜索（多个姓名用逗号/空格分隔）" onkeydown="if(event.key==='Enter')searchByName()">
+        <button class="btn-search" onclick="searchByName()">搜索</button>
+        <button class="btn-clear-search" id="clearSearchBtn" onclick="closeSearch()" style="display:none">返回总览</button>
+      </div>
+      <div id="searchResultsPanel" style="display:none">
+        <div class="detail-meta">
+          <span id="searchResultCount"></span>
+          <button class="btn-export" onclick="exportSearchCSV()">导出搜索结果 CSV</button>
+        </div>
+        <div class="table-wrap">
+          <table class="detail-table">
+            <thead>
+              <tr><th>#</th><th>孩子姓名</th><th>幼儿园</th><th>班级</th><th>提交时间</th><th></th></tr>
+            </thead>
+            <tbody id="searchTableBody"></tbody>
+          </table>
+        </div>
+      </div>
       <div id="dashboardContent"></div>
     </div>
   </div>

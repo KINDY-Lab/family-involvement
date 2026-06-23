@@ -11,6 +11,8 @@ let adminLoggedIn = false;
 let allRecords = [];
 let currentDetailRecords = [];
 let currentKindergarten = '';
+let currentSearchResults = [];
+let fromSearch = false;
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -119,6 +121,14 @@ async function showDashboard() {
   document.getElementById('recordView') && (document.getElementById('recordView').style.display = 'none');
   document.getElementById('dashboardView').style.display = 'block';
   document.getElementById('dashboardTitle').textContent = '问卷管理后台';
+  // Reset search panel state when returning to dashboard overview
+  fromSearch = false;
+  const panel = document.getElementById('searchResultsPanel');
+  if (panel) panel.style.display = 'none';
+  const clearBtn = document.getElementById('clearSearchBtn');
+  if (clearBtn) clearBtn.style.display = 'none';
+  const content = document.getElementById('dashboardContent');
+  if (content) content.style.display = 'block';
   history.pushState(null, '', '#dashboard');
 
   if (allRecords.length === 0) {
@@ -329,6 +339,93 @@ function exportCSV(kindergarten) {
   URL.revokeObjectURL(url);
 }
 
+// ── Search by child name ──
+// Pure in-memory filter over the already-loaded allRecords.
+// Catches both invisible cases: demo_kindergarten null, and kindergarten
+// values that don't exactly match the allowlist (free-text / old allowlist).
+function searchByName() {
+  const raw = document.getElementById('searchInput').value || '';
+  const queries = raw.split(/[\s,，、]+/).map(s => s.trim()).filter(Boolean);
+  if (queries.length === 0) {
+    alert('请输入要搜索的孩子姓名');
+    return;
+  }
+
+  currentSearchResults = allRecords.filter(r => {
+    const name = (r.demo_child_name || '').trim();
+    if (!name) return false;
+    return queries.some(q => name.includes(q) || q.includes(name));
+  }).sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
+
+  renderSearchResults(currentSearchResults);
+}
+
+function renderSearchResults(results) {
+  document.getElementById('dashboardContent').style.display = 'none';
+  document.getElementById('searchResultsPanel').style.display = 'block';
+  document.getElementById('clearSearchBtn').style.display = 'inline-block';
+  document.getElementById('searchResultCount').innerHTML =
+    '搜索到 <strong>' + results.length + '</strong> 条记录';
+
+  const tbody = document.getElementById('searchTableBody');
+  if (results.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">未找到匹配记录</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = results.map((r, i) => {
+    const name = r.demo_child_name || '-';
+    const kg = r.demo_kindergarten || '(未填写)';
+    const cls = r.demo_class || '-';
+    const time = r.submitted_at ? new Date(r.submitted_at).toLocaleString('zh-CN') : '-';
+    return `<tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(name)}</td>
+      <td>${escapeHtml(kg)}</td>
+      <td>${escapeHtml(cls)}</td>
+      <td>${time}</td>
+      <td><button class="btn-view" onclick="viewSearchRecord(${i})">查看详情</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function viewSearchRecord(i) {
+  currentDetailRecords = currentSearchResults;
+  currentKindergarten = '搜索结果';
+  fromSearch = true;
+  document.getElementById('dashboardView').style.display = 'none';
+  showRecord(i);
+}
+
+function closeSearch() {
+  document.getElementById('searchResultsPanel').style.display = 'none';
+  document.getElementById('clearSearchBtn').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  document.getElementById('searchInput').value = '';
+  currentSearchResults = [];
+}
+
+function exportSearchCSV() {
+  const records = currentSearchResults;
+  if (!records || records.length === 0) {
+    alert('没有可导出的记录');
+    return;
+  }
+  const sorted = records.slice().sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
+  const BOM = '﻿';
+  const header = CSV_COLUMNS.map(c => c.h).join(',') + '\n';
+  const rows = sorted.map((r, i) => CSV_COLUMNS.map(c => csvVal(c.f(r, i))).join(',')).join('\n');
+  const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '搜索结果_问卷记录.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 // ── Record Detail View ──
 function showRecord(index) {
   const r = currentDetailRecords[index];
@@ -345,7 +442,12 @@ function showRecord(index) {
 
 function backToDetail() {
   document.getElementById('recordView').style.display = 'none';
-  showDetail(currentKindergarten);
+  if (fromSearch) {
+    fromSearch = false;
+    document.getElementById('dashboardView').style.display = 'block';
+  } else {
+    showDetail(currentKindergarten);
+  }
 }
 
 function buildRecordHTML(r) {
