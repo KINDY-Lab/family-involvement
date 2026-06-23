@@ -678,6 +678,12 @@ async function submitQuestionnaire() {
     tc_group_scores: tcScores.groupScores
   };
 
+  // Mark free-text ("其他") kindergarten so backend can tell it apart from whitelist values
+  const kgSel = document.getElementById('demo_demo_kindergarten');
+  if (kgSel && kgSel.value === '__other__' && answers['demo_kindergarten']) {
+    answers['demo_kindergarten'] = '【其他】' + answers['demo_kindergarten'];
+  }
+
   // Save to database (await to catch errors)
   const responseData = buildResponseData(answers, fiqScores, ccnesScores, tcScores, parentType);
   let saveResult = { success: false, method: 'none' };
