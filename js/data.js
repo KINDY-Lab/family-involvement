@@ -228,7 +228,7 @@ const QUESTIONNAIRE_DATA = {
         scale: ['非常不舒适', '不舒适', '舒适', '非常舒适'],
         items: [
           { id: 'tc_05', text: '与教师分享您的家庭生活', reverse: false },
-          { id: 'tc_06', text: '与教师分享信仰和宗教在您家庭中起到的作用', reverse: false },
+          { id: 'tc_06', text: '与教师分享信仰和宗教在您家庭中起到的作用', reverse: false, optional: true },
           { id: 'tc_07', text: '与教师分享您家庭正在发生的变化', reverse: false }
         ]
       },

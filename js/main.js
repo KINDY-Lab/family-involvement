@@ -129,7 +129,7 @@ function validateStep3() {
   const unanswered = [];
   for (const g of tc.groups) {
     for (const item of g.items) {
-      if (answers[item.id] === undefined) unanswered.push(item.id);
+      if (answers[item.id] === undefined && !item.optional) unanswered.push(item.id);
     }
   }
   return unanswered.length === 0 ? true : unanswered;
@@ -543,7 +543,8 @@ function renderStep3() {
 
     group.items.forEach(item => {
       html += `<div class="matrix-row matrix-row-vertical" id="matrix_row_${item.id}">`;
-      html += `<div class="matrix-item-text"><span class="q-num" style="display:inline">Q${qNum}</span> ${item.text}</div>`;
+      const optMark = item.optional ? '<span class="optional-badge">选填</span>' : '';
+      html += `<div class="matrix-item-text"><span class="q-num" style="display:inline">Q${qNum}</span> ${item.text}${optMark}</div>`;
       html += `<div class="matrix-options matrix-options-full">`;
       group.scale.forEach((s, i) => {
         const val = i + 1;
