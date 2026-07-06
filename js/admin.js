@@ -306,6 +306,22 @@ const CSV_COLUMNS = [
   { h: '雷达_师幼', f: r => r.radar_teacher_child || '' },
 ];
 
+// ── 原始逐题作答（追加在均分列之后，供信效度分析） ──
+// FIQ 扁平字段 fiq_01..fiq_36
+QUESTIONNAIRE_DATA.fiq.sections.forEach(sec =>
+  sec.questions.forEach(q =>
+    CSV_COLUMNS.push({ h: q.id, f: r => r[q.id] != null ? r[q.id] : '' })));
+// 师幼关系 嵌套于 teacher_child_raw tc_01..tc_25
+QUESTIONNAIRE_DATA.teacherChild.groups.forEach(g =>
+  g.items.forEach(it =>
+    CSV_COLUMNS.push({ h: it.id, f: r => r.teacher_child_raw && r.teacher_child_raw[it.id] != null ? r.teacher_child_raw[it.id] : '' })));
+// CCNES 扁平字段 ccnes_c1_1..ccnes_c12_6
+QUESTIONNAIRE_DATA.ccnes.scenarios.forEach(sc =>
+  sc.responses.forEach(rp => {
+    const k = 'ccnes_' + rp.id;
+    CSV_COLUMNS.push({ h: k, f: r => r[k] != null ? r[k] : '' });
+  }));
+
 function csvVal(v) {
   if (v === null || v === undefined) return '';
   const s = String(v);
